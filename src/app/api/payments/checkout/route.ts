@@ -43,7 +43,7 @@ export async function POST(request: Request) {
           },
         ],
         external_reference: transaction.id, // Clave: MP nos devuelve este ID en el webhook
-        notification_url: `https://proyecto-c-payments-compulibre.vercel.app//api/webhooks/mercadopago`, 
+        notification_url: `https://proyecto-c-payments-compulibre.vercel.app/api/webhooks/mercadopago`, 
       },
     });
 
