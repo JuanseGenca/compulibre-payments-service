@@ -16,7 +16,7 @@ export async function POST(request: Request) {
   try {
     // Leemos el body según el contrato de la API
     const body = await request.json();
-    const { buyerId, sellerId, orderReference, amount, currency, itemsDescription } = body;
+    const { buyerId, sellerId, orderReference, amount, currency, itemsDescription, quantity } = body;
 
     // 3. Guardamos la transacción en estado PENDING en nuestra base de datos
     const transaction = await prisma.transaction.create({
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
           {
             id: orderReference,
             title: itemsDescription,
-            quantity: 1,
+            quantity: quantity,
             unit_price: amount,
             currency_id: currency,
           },
