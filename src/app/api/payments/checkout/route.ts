@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server';
 import { MercadoPagoConfig, Preference } from 'mercadopago';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient } from '@prisma/client/extension';
-//import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 // 1. Inicializamos Prisma con el adaptador de Postgres que configuramos antes
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
