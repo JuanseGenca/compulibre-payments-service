@@ -43,14 +43,14 @@ export async function POST(request: Request) {
           },
         ],
         external_reference: transaction.id, // Clave: MP nos devuelve este ID en el webhook
-        // notification_url: `${process.env.PUBLIC_URL}/api/webhooks/mercadopago`, // Lo activaremos luego
+        notification_url: `https://proyecto-c-payments-compulibre.vercel.app/api/webhooks/mercadopago`, 
       },
     });
 
     // 5. Devolvemos la respuesta exacta que espera la Buyer App
     return NextResponse.json({
       transactionId: transaction.id,
-      checkoutUrl: result.sandbox_init_point,
+      checkoutUrl: result.init_point,
     }, { status: 200 });
 
   } catch (error) {
