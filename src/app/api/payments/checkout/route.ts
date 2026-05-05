@@ -50,7 +50,7 @@ export async function POST(request: Request) {
     // 5. Devolvemos la respuesta exacta que espera la Buyer App
     return NextResponse.json({
       transactionId: transaction.id,
-      checkoutUrl: result.sandbox_init_point,
+      checkoutUrl: result.init_point,
     }, { status: 200 });
 
   } catch (error) {
