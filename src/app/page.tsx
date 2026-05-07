@@ -1,8 +1,13 @@
 import Navbar from "@/components/navbar";
-import { SignInButton, Show } from "@clerk/nextjs";
+import { SignInButton} from "@clerk/nextjs";
 import Link from "next/link";
+import { currentUser } from "@clerk/nextjs/server";
 
-export default function HomePage() {
+export default async function HomePage() {
+
+  const user = await currentUser();
+  const isAdmin = user?.publicMetadata?.role === "admin";
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
@@ -20,22 +25,31 @@ export default function HomePage() {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4">
-          <Show when="signed-out">
-            <SignInButton mode="modal">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-md transition-all hover:shadow-lg transform hover:-translate-y-0.5">
-                Empezar a cobrar hoy
-              </button>
-            </SignInButton>
-          </Show>
+          {!user && (
+            //todo en una linea para que next no tire error
+            <SignInButton mode="modal"><button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-md transition-all hover:shadow-lg transform hover:-translate-y-0.5">Empezar a cobrar hoy</button></SignInButton>
+          )}
           
-          <Show when="signed-in">
-            <Link 
-              href="/dashboard"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-md transition-all hover:shadow-lg transform hover:-translate-y-0.5"
-            >
-              Abrir mi Panel
-            </Link>
-          </Show>
+          {user && (
+            <>
+              <Link 
+                href="/dashboard"
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-xl shadow-md transition-all hover:shadow-lg transform hover:-translate-y-0.5"
+              >
+                Abrir mi Panel
+              </Link>
+
+              {/* Si además de haber usuario, es Admin, sumamos este botón */}
+              {isAdmin && (
+                <Link 
+                  href="/admin"
+                  className="bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 px-8 rounded-xl shadow-md transition-all hover:shadow-lg transform hover:-translate-y-0.5"
+                >
+                  Panel de Admin
+                </Link>
+              )}
+            </>
+          )}
 
         </div>
       </main>
