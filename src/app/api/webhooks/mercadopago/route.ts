@@ -23,11 +23,11 @@ export async function POST(request: Request) {
       });
 
       // Vemos que devuelve mercado pago
-      if (paymentInfo.status === 'approved') {
+      if (paymentInfo.status === 'approved' ) {
         finalStatus = 'PAID';
 
         // Si el pago fue aprobado, actualizamos el balance del vendedor.
-        if(txRecord){
+        if(txRecord && txRecord.status !== 'PAID'){
           await prisma.account.upsert({
             where: { clerk_user_id: txRecord.sellerId },
             update: { balance: { increment: txRecord.amount } },
