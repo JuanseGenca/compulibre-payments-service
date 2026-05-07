@@ -9,10 +9,8 @@ datasource db {
 }
 
 model Account {
-  id                String     @id @default(uuid())
   clerk_user_id     String     @unique
-  pending_balance   Float      @default(0.0)
-  available_balance Float      @default(0.0) 
+  balance           Float      @default(0.0)
   payouts           Payout[]
 }
 
@@ -34,5 +32,5 @@ model Payout {
   destination_cbu String
   status          String   @default("PROCESSING") // PROCESSING, COMPLETED
   
-  account         Account  @relation(fields: [account_id], references: [id])
+  account         Account  @relation(fields: [account_id], references: [clerk_user_id])
 }

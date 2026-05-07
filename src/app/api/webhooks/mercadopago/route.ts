@@ -16,10 +16,27 @@ export async function POST(request: Request) {
       const paymentInfo = await new Payment(mpClient).get({ id: paymentId });
 
       let finalStatus = 'PENDING';
+      
+      //recupero la transaccion
+      const txRecord = await prisma.transaction.findUnique({
+      where: { id: paymentInfo.external_reference },
+      });
 
       // Vemos que devuelve mercado pago
       if (paymentInfo.status === 'approved') {
         finalStatus = 'PAID';
+
+        // Si el pago fue aprobado, actualizamos el balance del vendedor.
+        if(txRecord){
+          await prisma.account.upsert({
+            where: { clerk_user_id: txRecord.sellerId },
+            update: { balance: { increment: txRecord.amount } },
+            create: { clerk_user_id: txRecord.sellerId, balance: txRecord.amount }
+          })
+
+          console.log(`Saldo acreditado a ${txRecord.sellerId}: +$${txRecord.amount}`);
+        }
+        
         console.log(`Transacción ${paymentInfo.external_reference} cobrada con éxito!`);
       }else if (paymentInfo.status === 'rejected' || paymentInfo.status === 'cancelled') {
           finalStatus = 'REJECTED';
