@@ -17,6 +17,7 @@ export async function POST(request: Request) {
         currency: currency,
         sellerId: sellerId,
         status: 'PENDING',
+        buyerId: buyerId,
       },
     });
 

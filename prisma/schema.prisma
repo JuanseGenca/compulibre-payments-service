@@ -24,6 +24,7 @@ model Transaction {
   status                   String   @default("PENDING") // PENDING, APPROVED, REJECTED
   sellerId                 String
   created_at               DateTime @default(now())
+  buyerId                  String
 }
 
 model Payout {
