@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { MercadoPagoConfig, Preference } from 'mercadopago';
 import { prisma } from "@/lib/prisma";
-
-// 2. Inicializamos Mercado Pago con el token del .env
-const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN! });
+import { mpClient } from '@/lib/mercadopago';
 
 export async function POST(request: Request) {
   try {

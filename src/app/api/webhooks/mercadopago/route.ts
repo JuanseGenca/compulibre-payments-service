@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
 import { MercadoPagoConfig, Payment } from 'mercadopago';
 import { prisma } from "@/lib/prisma";
-
-// 2. Inicializamos Mercado Pago
-const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN! });
+import { mpClient } from '@/lib/mercadopago';
 
 export async function POST(request: Request) {
   try {
@@ -17,21 +15,25 @@ export async function POST(request: Request) {
       
       const paymentInfo = await new Payment(mpClient).get({ id: paymentId });
 
-      // Si la plata ya está acreditada
+      let finalStatus = 'PENDING';
+
+      // Vemos que devuelve mercado pago
       if (paymentInfo.status === 'approved') {
-        
-        //buscamos la transacción usando el external_reference y la marcamos como PAGADA
+        finalStatus = 'PAID';
+        console.log(`Transacción ${paymentInfo.external_reference} cobrada con éxito!`);
+      }else if (paymentInfo.status === 'rejected' || paymentInfo.status === 'cancelled') {
+          finalStatus = 'REJECTED';
+        }
+
+      //buscamos la transacción usando el external_reference y actualizamos
         await prisma.transaction.update({
           where: {
             id: paymentInfo.external_reference,
           },
           data: {
-            status: 'PAID', // Pasamos de PENDING a PAID
+            status: finalStatus, // Actualizamos el estado según lo que nos diga Mercado Pago
           },
         });
-        
-        console.log(`Transacción ${paymentInfo.external_reference} cobrada con éxito!`);
-      }
     }
 
     // 200 OK para Mercado Pago
