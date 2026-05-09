@@ -1,6 +1,8 @@
 import Navbar from "@/components/navbar";
+import PayoutForm from "@/components/PayoutForm";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import Link from "next/dist/client/link";
 import { redirect } from "next/navigation";
 
 export default async function DashboardPage() {
@@ -38,16 +40,24 @@ export default async function DashboardPage() {
             <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Mi Panel</h1>
             <p className="text-gray-500 mt-1">Gestioná tus movimientos y saldo.</p>
           </div>
-          
-          <div className="bg-white px-6 py-4 rounded-2xl border border-gray-200 shadow-sm flex items-center gap-4">
-            <div>
+
+          <div className="lg:col-span-1 space-y-6">
+            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <p className="text-sm font-medium text-gray-500 uppercase">Saldo Disponible</p>
-              <p className="text-2xl font-bold text-blue-600">$ {saldoDisponible.toLocaleString("es-AR")}</p>
+              <p className="text-4xl font-bold text-blue-600 mt-2">
+                $ {saldoDisponible.toLocaleString("es-AR")}
+              </p>
             </div>
-            <button className="bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 rounded-xl text-sm font-medium transition-colors">
-              Retirar
-            </button>
+            
+            {/* NUEVO: Botón al Historial */}
+            <Link 
+              href="/dashboard/retiros"
+              className="block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-xl transition-colors border border-gray-200"
+            >
+              Ver historial de retiros
+            </Link>
           </div>
+      
         </header>
 
         {/* Grilla principal: Izquierda Ventas, Derecha Compras */}
@@ -111,8 +121,8 @@ export default async function DashboardPage() {
                 </ul>
               )}
             </div>
-          </section>
-
+          </section>            
+        
         </div>
       </main>
     </div>
