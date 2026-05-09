@@ -1,6 +1,7 @@
 import Navbar from "@/components/navbar";
 import { prisma } from "@/lib/prisma";
 import ApprovePayoutButton from "@/components/AprobarPayout"; 
+import RejectPayoutButton from "@/components/RechazarPayout";
 
 export default async function AdminPage() {
   
@@ -130,7 +131,11 @@ export default async function AdminPage() {
                         <p className="text-xs text-gray-400 mt-2">Usuario: {payout.account_id}</p>
                       </div>
                       
-                      <div className="flex-shrink-0">
+                      <div className="flex items-center gap-2">
+                        {/* Botón de Rechazo (Nuevo) */}
+                       <RejectPayoutButton payoutId={payout.id} />
+      
+                      {/* Botón de Aprobación (Ya lo tenías) */}
                         <ApprovePayoutButton payoutId={payout.id} />
                       </div>
                     </li>

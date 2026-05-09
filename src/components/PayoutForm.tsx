@@ -27,7 +27,7 @@ export default function PayoutForm() {
       <h3 className="text-lg font-semibold text-gray-800">Solicitar Retiro</h3>
       
       <div>
-        <label className="block text-sm font-medium text-gray-700">Monto a retirar</label>
+        <label className="block text-sm font-medium text-black-700">Monto a retirar</label>
         <input 
           name="amount" 
           type="number" 
@@ -38,7 +38,7 @@ export default function PayoutForm() {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">CBU / CVU de destino</label>
+        <label className="block text-sm font-medium text-black-700">CBU / CVU de destino</label>
         <input 
           name="cbu" 
           type="text" 
