@@ -34,31 +34,32 @@ export default async function DashboardPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
 
-      <main className="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full">
-        <header className="mb-8 flex flex-col md:flex-row md:justify-between md:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Mi Panel</h1>
-            <p className="text-gray-500 mt-1">Gestioná tus movimientos y saldo.</p>
-          </div>
+      <main className="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8">
+        <header>
+          <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Mi Panel</h1>
+          <p className="text-gray-500 mt-1">Gestioná tus movimientos y saldo.</p>
+        </header>
 
-          <div className="lg:col-span-1 space-y-6">
-            <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-              <p className="text-sm font-medium text-gray-500 uppercase">Saldo Disponible</p>
-              <p className="text-4xl font-bold text-blue-600 mt-2">
+        {/* TARJETA PRINCIPAL DE SALDO (HERO CARD) */}
+          <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+            <div>
+              <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                Saldo Disponible
+              </p>
+              <p className="text-4xl md:text-5xl font-bold text-blue-600 mt-2">
                 $ {saldoDisponible.toLocaleString("es-AR")}
               </p>
             </div>
-            
-            {/* NUEVO: Botón al Historial */}
-            <Link 
-              href="/dashboard/retiros"
-              className="block w-full text-center bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-xl transition-colors border border-gray-200"
-            >
-              Ver historial de retiros
-            </Link>
-          </div>
-      
-        </header>
+    
+            <div className="flex-shrink-0 w-full md:w-auto">
+              <Link 
+                href="/dashboard/retiros"
+                className="flex items-center justify-center w-full md:w-auto bg-gray-900 hover:bg-gray-800 text-white font-semibold py-3 px-8 rounded-xl transition-all shadow-md transform hover:-translate-y-0.5"
+              >
+                Retirar dinero / Historial
+              </Link>
+            </div>
+          </section>
 
         {/* Grilla principal: Izquierda Ventas, Derecha Compras */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

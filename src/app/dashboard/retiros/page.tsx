@@ -28,7 +28,7 @@ export default async function RetirosPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
 
-      <main className="flex-grow p-4 md:p-8 max-w-4xl mx-auto w-full">
+      <main className="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full">
         <header className="mb-8 flex justify-between items-end border-b pb-4">
           <div>
             <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Historial de Retiros</h1>
@@ -43,9 +43,9 @@ export default async function RetirosPage() {
         </header>
         
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        <section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
+        <section className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
         <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
           {misPayouts.length === 0 ? (
             <div className="p-12 text-center">
