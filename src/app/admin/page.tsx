@@ -4,10 +4,24 @@ import ApprovePayoutButton from "@/components/AprobarPayout";
 
 export default async function AdminPage() {
   
-    const transactions = await prisma.transaction.findMany({
-        orderBy: { created_at: 'desc' },
-        take: 20 // Limitamos a las últimas 20 para no saturar la vista
-    });
+    // 1. Consultas a la base de datos
+    const [transactions, retirosPendientes, retirosCompletados] = await Promise.all([
+        prisma.transaction.findMany({
+            orderBy: { created_at: 'desc' }, // Ajustar a created_at si es necesario
+            take: 20 
+        }),
+        prisma.payout.findMany({
+            where: { status: "PROCESSING" },
+            include: { account: true },
+            orderBy: { id: "asc" },
+        }),
+        prisma.payout.findMany({
+            where: { status: "COMPLETED" },
+            include: { account: true },
+            orderBy: { id: "desc" }, // Los más recientes primero
+            take: 10 // Mostramos solo los últimos 10 para no saturar
+        })
+    ]);
   
     const totalProcesado = transactions
         .filter(t => t.status === 'PAID')
@@ -15,12 +29,6 @@ export default async function AdminPage() {
 
     const comisiones = totalProcesado * 0.05;
 
-    // Traemos todos los retiros que necesitan tu atención
-    const retirosPendientes = await prisma.payout.findMany({
-      where: { status: "PROCESSING" },
-      include: { account: true }, // Incluimos la cuenta para saber de quién es
-      orderBy: { id: "asc" }, // Los más viejos primero
-    });
 
     return (
     <div className="min-h-screen bg-gray-50">
@@ -125,6 +133,33 @@ export default async function AdminPage() {
                       <div className="flex-shrink-0">
                         <ApprovePayoutButton payoutId={payout.id} />
                       </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </div>
+
+          {/* SECCIÓN 3: Retiros Completados */}
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden opacity-80">
+            <div className="p-6 border-b border-gray-100 bg-green-50/30">
+              <h2 className="font-semibold text-gray-800 flex items-center gap-2 text-gray-500">
+                <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                Retiros Completados (Historial)
+              </h2>
+            </div>
+            <div className="p-6">
+              {retirosCompletados.length === 0 ? (
+                <p className="text-gray-500 text-center py-4">Aún no se han completado retiros.</p>
+              ) : (
+                <ul className="space-y-4">
+                  {retirosCompletados.map((payout) => (
+                    <li key={payout.id} className="flex justify-between items-center p-4 border border-gray-50 rounded-xl bg-gray-50/50 grayscale">
+                      <div>
+                        <p className="font-semibold text-gray-900">$ {payout.amount.toLocaleString('es-AR')}</p>
+                        <p className="text-xs text-gray-500">CBU Destino: {payout.destination_cbu}</p>
+                      </div>
+                      <span className="text-xs font-bold text-green-600 uppercase">Pagado</span>
                     </li>
                   ))}
                 </ul>
