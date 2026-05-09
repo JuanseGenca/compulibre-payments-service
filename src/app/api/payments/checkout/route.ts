@@ -18,6 +18,7 @@ export async function POST(request: Request) {
         sellerId: sellerId,
         status: 'PENDING',
         buyerId: buyerId,
+        description: itemsDescription || "Venta de hardware",
       },
     });
 

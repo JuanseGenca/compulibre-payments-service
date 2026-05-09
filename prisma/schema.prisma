@@ -23,6 +23,7 @@ model Transaction {
   sellerId                 String
   created_at               DateTime @default(now())
   buyerId                  String
+  description              String?
 }
 
 model Payout {

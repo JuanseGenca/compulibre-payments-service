@@ -75,20 +75,34 @@ export default async function DashboardPage() {
               ) : (
                 <ul className="space-y-4">
                   {misVentas.map((tx) => (
-                    <li key={tx.id} className="flex justify-between items-center p-4 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
-                      <div>
-                        <p className="font-medium text-gray-900">$ {Number(tx.amount).toLocaleString("es-AR")}</p>
-                        <p className="text-xs text-gray-400">{new Date(tx.created_at).toLocaleDateString("es-AR")}</p>
+                  <li key={tx.id} className="flex justify-between items-center p-4 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
+                    <div className="flex flex-col">
+                      {/* Título de la transacción */}
+                      <p className="font-semibold text-gray-900">
+                        {tx.description || "Venta sin descripción"}
+                      </p>
+        
+                      {/* Monto y fecha en la misma línea para ahorrar espacio */}
+                      <div className="flex items-center gap-2 mt-1">
+                        <p className="text-sm font-bold text-blue-600">
+                          $ {Number(tx.amount).toLocaleString("es-AR")}
+                        </p>
+                        <span className="text-gray-300">•</span>
+                          <p className="text-xs text-gray-400">
+                            {new Date(tx.created_at).toLocaleDateString("es-AR")}
+                          </p>             
                       </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        tx.status === "PAID" ? "bg-green-100 text-green-700" :
-                        tx.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
-                        "bg-red-100 text-red-700"
+                    </div>
+
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      tx.status === "PAID" ? "bg-green-100 text-green-700" :
+                      tx.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
+                      "bg-red-100 text-red-700"
                       }`}>
-                        {tx.status}
-                      </span>
-                    </li>
-                  ))}
+                      {tx.status}
+                    </span>
+                  </li>
+               ))}
                 </ul>
               )}
             </div>
@@ -106,20 +120,34 @@ export default async function DashboardPage() {
                 <ul className="space-y-4">
                   {misCompras.map((tx) => (
                     <li key={tx.id} className="flex justify-between items-center p-4 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
-                      <div>
-                        <p className="font-medium text-gray-900">$ {Number(tx.amount).toLocaleString("es-AR")}</p>
-                        <p className="text-xs text-gray-400">{new Date(tx.created_at).toLocaleDateString("es-AR")}</p>
-                      </div>
+                      <div className="flex flex-col">
+                        {/* Título de la transacción */}
+                        <p className="font-semibold text-gray-900">
+                          {tx.description || "Compra sin descripción"}
+                        </p>
+        
+                        {/* Monto y fecha en la misma línea para ahorrar espacio */}
+                        <div className="flex items-center gap-2 mt-1">
+                          <p className="text-sm font-bold text-blue-600">
+                            $ {Number(tx.amount).toLocaleString("es-AR")}
+                          </p>
+                          <span className="text-gray-300">•</span>
+                          <p className="text-xs text-gray-400">
+                            {new Date(tx.created_at).toLocaleDateString("es-AR")}
+                          </p>
+                        </div>
+                     </div>
+
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                         tx.status === "PAID" ? "bg-green-100 text-green-700" :
                         tx.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
                         "bg-red-100 text-red-700"
-                      }`}>
+                        }`}>
                         {tx.status}
                       </span>
                     </li>
                   ))}
-                </ul>
+              </ul>
               )}
             </div>
           </section>            
