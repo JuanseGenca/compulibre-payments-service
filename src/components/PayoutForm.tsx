@@ -27,25 +27,25 @@ export default function PayoutForm() {
       <h3 className="text-lg font-semibold text-gray-800">Solicitar Retiro</h3>
       
       <div>
-        <label className="block text-sm font-medium text-black-700">Monto a retirar</label>
+        <label className="block text-sm font-medium text-gray-900">Monto a retirar</label>
         <input 
           name="amount" 
           type="number" 
           required 
           placeholder="0.00"
-          className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 border"
+          className="text-gray-900 mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 border placeholder-gray-500"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-black-700">CBU / CVU de destino</label>
+        <label className="block text-sm font-medium text-gray-900">CBU / CVU de destino</label>
         <input 
           name="cbu" 
           type="text" 
           required 
           maxLength={22}
           placeholder="22 dígitos"
-          className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 border"
+          className="text-gray-900 mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm p-3 border placeholder-gray-500"
         />
       </div>
 
