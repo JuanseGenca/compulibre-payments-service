@@ -1,34 +1,59 @@
 import Navbar from "@/components/navbar";
+import Pagination from "@/components/Pagination";
 import PayoutForm from "@/components/PayoutForm";
+import TransactionFilters from "@/components/TransactionFilters";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import Link from "next/dist/client/link";
 import { redirect } from "next/navigation";
 
-export default async function DashboardPage() {
-
-    const { userId } = await auth();
+export default async function DashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}) {
+  
+  const { userId } = await auth();
   if (!userId) redirect("/");
 
-  // Traemos la cuenta del usuario
-  const account = await prisma.account.findUnique({
-    where: { clerk_user_id: userId }
-  });
+  const resolvedParams = await searchParams;
+
+  // 1. Extraemos los parámetros de la URL
+  const page = Number(resolvedParams.page || 1);
+  const query = (resolvedParams.q as string) || "";
+  const from = (resolvedParams.from as string) || "";
+  const to = (resolvedParams.to as string) || "";
+  
+  const pageSize = 10;
+  const skip = (page - 1) * pageSize;
+
+  // 2. Construimos el filtro dinámico para Prisma
+  const whereFilters = {
+    description: query ? { contains: query, mode: "insensitive" as const } : undefined,
+    created_at: (from && to) ? {
+      gte: new Date(from),
+      lte: new Date(to + "T23:59:59.999Z"), // Para incluir todo el día final
+    } : undefined,
+  };
+
+  // 3. Ejecutamos las consultas con filtros y paginación
+  const [account, misVentas, misCompras] = await Promise.all([
+    prisma.account.findUnique({ where: { clerk_user_id: userId } }),
+    prisma.transaction.findMany({
+      where: { sellerId: userId, ...whereFilters },
+      orderBy: { created_at: "desc" },
+      take: pageSize,
+      skip: skip,
+    }),
+    prisma.transaction.findMany({
+      where: { buyerId: userId, ...whereFilters },
+      orderBy: { created_at: "desc" },
+      take: pageSize,
+      skip: skip,
+    }),
+  ]);
 
   const saldoDisponible = account?.balance || 0;
-
-  
-  // 2. Buscamos las VENTAS (el usuario es el sellerId)
-  const misVentas = await prisma.transaction.findMany({
-    where: { sellerId: userId },
-    orderBy: { created_at: "desc" },
-  });
-
-  // 3. Buscamos las COMPRAS (el usuario es el buyerId)
-  const misCompras = await prisma.transaction.findMany({
-    where: { buyerId: userId },
-    orderBy: { created_at: "desc" },
-  });
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -60,6 +85,11 @@ export default async function DashboardPage() {
               </Link>
             </div>
           </section>
+
+        <section className="space-y-4">
+          <h2 className="text-xl text-gray-900 font-bold">Filtrar Movimientos</h2>
+          <TransactionFilters />
+        </section>
 
         {/* Grilla principal: Izquierda Ventas, Derecha Compras */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -153,6 +183,7 @@ export default async function DashboardPage() {
           </section>            
         
         </div>
+        <Pagination currentPage={page} hasMore={misVentas.length === pageSize || misCompras.length === pageSize} />
       </main>
     </div>
   );
