@@ -15,14 +15,3 @@ export async function confirmOrderSellerApp(payload: any) {
     message: "Stock descontado exitosamente" 
   };
 }
-
-export async function createShipment(payload: any) {
-  console.log("🟨 [MOCK] Creando etiqueta de envío:", payload);
-  await new Promise(resolve => setTimeout(resolve, 500));
-  return {
-    trackingId: "TRK-COMPU-9999",
-    status: "LABEL_CREATED",
-    courier: "Andreani",
-    labelUrl: "https://shipping-app.com/labels/TRK-COMPU-9999.pdf"
-  };
-}

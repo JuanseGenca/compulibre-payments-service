@@ -48,8 +48,8 @@ export async function POST(request: Request) {
 
     const result = await preference.create({
       body: {
-        items: mpItems, // Le pasamos el array completo
-        external_reference: transaction.id, // Tu ID de Prisma (Clave para el webhook)
+        items: mpItems, 
+        external_reference: transaction.id,
         notification_url: `https://proyecto-c-payments-compulibre.vercel.app/api/webhooks/mercadopago`,
       },
     });
