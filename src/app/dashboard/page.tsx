@@ -1,11 +1,11 @@
 import Navbar from "@/components/navbar";
 import Pagination from "@/components/Pagination";
-import PayoutForm from "@/components/PayoutForm";
 import TransactionFilters from "@/components/TransactionFilters";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
-import Link from "next/dist/client/link";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { TransactionItem } from "@prisma/client";
 
 export default async function DashboardPage({
   searchParams,
@@ -29,24 +29,25 @@ export default async function DashboardPage({
 
   // 2. Construimos el filtro dinámico para Prisma
   const whereFilters = {
-    description: query ? { contains: query, mode: "insensitive" as const } : undefined,
     created_at: (from && to) ? {
       gte: new Date(from),
       lte: new Date(to + "T23:59:59.999Z"), // Para incluir todo el día final
     } : undefined,
   };
 
-  // 3. Ejecutamos las consultas con filtros y paginación
+  // 3. Ejecutamos las consultas con filtros y paginación e items
   const [account, misVentas, misCompras] = await Promise.all([
     prisma.account.findUnique({ where: { clerk_user_id: userId } }),
     prisma.transaction.findMany({
       where: { sellerId: userId, ...whereFilters },
+      include: { items: true },
       orderBy: { created_at: "desc" },
       take: pageSize,
       skip: skip,
     }),
     prisma.transaction.findMany({
       where: { buyerId: userId, ...whereFilters },
+      include: { items: true },
       orderBy: { created_at: "desc" },
       take: pageSize,
       skip: skip,
@@ -107,9 +108,11 @@ export default async function DashboardPage({
                   {misVentas.map((tx) => (
                   <li key={tx.id} className="flex justify-between items-center p-4 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
                     <div className="flex flex-col">
-                      {/* Título de la transacción */}
-                      <p className="font-semibold text-gray-900">
-                        {tx.description || "Venta sin descripción"}
+                     {/* Título dinámico de la venta */}
+                      <p className="font-semibold text-gray-900 line-clamp-1" title={tx.items && tx.items.length > 0 ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ") : "Venta sin ítems"}>
+                        {tx.items && tx.items.length > 0
+                          ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ")
+                          : "Venta sin ítems detallados"}
                       </p>
         
                       {/* Monto y fecha en la misma línea para ahorrar espacio */}
@@ -151,9 +154,11 @@ export default async function DashboardPage({
                   {misCompras.map((tx) => (
                     <li key={tx.id} className="flex justify-between items-center p-4 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
                       <div className="flex flex-col">
-                        {/* Título de la transacción */}
-                        <p className="font-semibold text-gray-900">
-                          {tx.description || "Compra sin descripción"}
+                        {/* Título dinámico de la compra */}
+                        <p className="font-semibold text-gray-900 line-clamp-1" title={tx.items && tx.items.length > 0 ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ") : "Compra sin ítems"}>
+                          {tx.items && tx.items.length > 0
+                            ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ")
+                            : "Compra sin ítems detallados"}
                         </p>
         
                         {/* Monto y fecha en la misma línea para ahorrar espacio */}
