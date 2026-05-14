@@ -23,7 +23,19 @@ model Transaction {
   sellerId                 String
   created_at               DateTime @default(now())
   buyerId                  String
-  description              String?
+  payment_method           String?
+  items                    TransactionItem[]
+}
+
+model TransactionItem {
+  id            String      @id @default(uuid())
+  productId     String
+  quantity      Int
+  name          String
+  unit_price    Float
+
+  transactionId String
+  transaction   Transaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
 }
 
 model Payout {
