@@ -3,11 +3,18 @@ import { MercadoPagoConfig, Preference } from 'mercadopago';
 import { prisma } from "@/lib/prisma";
 import { mpClient } from '@/lib/mercadopago';
 
+interface ItemCarrito {
+  productId: string;
+  name: string;
+  quantity: number;
+  unit_price: number;
+}
+
 export async function POST(request: Request) {
   try {
     // Leemos el body según el contrato de la API
     const body = await request.json();
-    const { buyerId, sellerId, orderReference, amount, currency, itemsDescription, quantity } = body;
+    const { buyerId, sellerId, orderReference, amount, currency, items} = body;
 
     // 3. Guardamos la transacción en estado PENDING en nuestra base de datos
     const transaction = await prisma.transaction.create({
@@ -18,25 +25,32 @@ export async function POST(request: Request) {
         sellerId: sellerId,
         status: 'PENDING',
         buyerId: buyerId,
-        description: itemsDescription || "Venta de hardware",
+        items: {
+          create: items.map((item: ItemCarrito) => ({
+            productId: item.productId,
+            name: item.name,
+            quantity: item.quantity,
+            unit_price: item.unit_price 
+          }))
+        }
       },
     });
 
     // 4. Creamos la preferencia de pago en Mercado Pago
     const preference = new Preference(mpClient);
+    const mpItems = body.items.map((item: ItemCarrito) => ({
+       id: item.productId,
+       title: item.name,
+       quantity: item.quantity,
+       unit_price: item.unit_price, 
+       currency_id: currency || "ARS",
+    }));
+
     const result = await preference.create({
       body: {
-        items: [
-          {
-            id: orderReference,
-            title: itemsDescription,
-            quantity: quantity,
-            unit_price: amount,
-            currency_id: currency,
-          },
-        ],
-        external_reference: transaction.id, // Clave: MP nos devuelve este ID en el webhook
-        notification_url: `https://proyecto-c-payments-compulibre.vercel.app/api/webhooks/mercadopago`, 
+        items: mpItems, // Le pasamos el array completo
+        external_reference: transaction.id, // Tu ID de Prisma (Clave para el webhook)
+        notification_url: `https://proyecto-c-payments-compulibre.vercel.app/api/webhooks/mercadopago`,
       },
     });
 
