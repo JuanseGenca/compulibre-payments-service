@@ -21,7 +21,6 @@ export async function POST(request: Request) {
       // Vemos que devuelve mercado pago
       if (paymentInfo.status === 'approved' ) {
         finalStatus = 'PAID';
-        console.log(`Transacción ${paymentInfo.external_reference} cobrada con éxito!`);
       }else if (paymentInfo.status === 'rejected' || paymentInfo.status === 'cancelled') {
           finalStatus = 'REJECTED';
         }
