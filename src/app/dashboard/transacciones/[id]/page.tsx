@@ -3,6 +3,7 @@ import { auth } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/navbar";
+import PrintButton from "@/components/PrintButton";
 
 export default async function TransactionDetailPage({
   params,
@@ -28,20 +29,25 @@ export default async function TransactionDetailPage({
   const esVendedor = tx.sellerId === userId;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
-      <main className="flex-grow p-4 md:p-8 max-w-3xl mx-auto w-full">
+    <div className="min-h-screen bg-gray-50 print:bg-white flex flex-col">
+      <div className="print:hidden">
+        <Navbar />
+      </div>
+      <main className="flex-grow p-4 md:p-8 max-w-3xl mx-auto w-full print:p-0">
         
-        <Link 
-          href="/dashboard" 
-          className="text-sm text-blue-600 hover:underline mb-6 inline-block"
-        >
-          ← Volver al panel
-        </Link>
+        <div className="flex justify-between items-center mb-6 print:hidden">
+            <Link 
+            href="/dashboard" 
+            className="text-sm text-blue-600 hover:underline mb-6 inline-block"
+            >
+                ← Volver al panel
+            </Link>
+            <PrintButton />
+        </div>
 
-        <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden">
+        <div className="bg-white rounded-3xl border border-gray-200 shadow-sm overflow-hidden print:border-none print:shadow-none">
           {/* Cabecera del Recibo */}
-          <div className="p-8 border-b border-gray-100 bg-gray-50/50 text-center">
+          <div className="p-8 border-b border-gray-100 bg-gray-50/50 text-center print:bg-transparent">
             <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
               tx.status === 'PAID' ? 'bg-green-100 text-green-700' : 
               tx.status === 'PENDING' ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'
@@ -78,7 +84,7 @@ export default async function TransactionDetailPage({
               </ul>
             </div>
 
-            <hr className="border-gray-100" />
+            <hr className="border-gray-100 print:border-gray-300" />
 
             {/* Información Técnica */}
             <div className="grid grid-cols-2 gap-6 text-sm">
@@ -102,8 +108,8 @@ export default async function TransactionDetailPage({
           </div>
 
           {/* Pie del Recibo */}
-          <div className="p-6 bg-gray-900 text-center">
-            <p className="text-gray-400 text-xs">CompuLibre Payments - Comprobante oficial de operación</p>
+          <div className="p-6 bg-gray-900 text-center print:bg-white print:border-t print:border-gray-200">
+            <p className="text-gray-400 text-xs print:text-gray-500">CompuLibre Payments - Comprobante oficial de operación</p>
           </div>
         </div>
       </main>
