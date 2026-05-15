@@ -28,7 +28,17 @@ export default async function DashboardPage({
   const skip = (page - 1) * pageSize;
 
   // 2. Construimos el filtro dinámico para Prisma
-  const whereFilters = {
+  const whereFilters : any = {
+    ...(query && {
+      items: {
+        some: {
+          name: {
+            contains: query,
+            mode: "insensitive", // Ignora mayúsculas y minúsculas
+          },
+        },
+      },
+    }),
     created_at: (from && to) ? {
       gte: new Date(from),
       lte: new Date(to + "T23:59:59.999Z"), // Para incluir todo el día final
