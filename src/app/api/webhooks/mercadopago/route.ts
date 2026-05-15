@@ -17,11 +17,6 @@ export async function POST(request: Request) {
       const paymentInfo = await new Payment(mpClient).get({ id: paymentId });
 
       let finalStatus = 'PENDING';
-      
-      //recupero la transaccion
-      const txOriginal = await prisma.transaction.findUnique({
-      where: { id: paymentInfo.external_reference },
-      });
 
       // Vemos que devuelve mercado pago
       if (paymentInfo.status === 'approved' ) {
@@ -31,61 +26,69 @@ export async function POST(request: Request) {
           finalStatus = 'REJECTED';
         }
 
-      //Si la transacción existe y no esta paid, actualizamos el estado y actualizamos el saldo del vendedor si corresponde
-      if(txOriginal && txOriginal.status !== 'PAID'){
-        //buscamos la transacción usando el external_reference y actualizamos
-        const txRecord = await prisma.transaction.update({
-          where: {
-           id: paymentInfo.external_reference,
-          },
-          data: {
-            status: finalStatus,
-            payment_method: paymentInfo.payment_method_id, 
-          },
-          include: {
-            items: true
-          }
-        });
-        
-        if(finalStatus === 'PAID'){
-          //ACREDITAMOS AL VENDEDOR
-          await prisma.account.upsert({
-            where: { clerk_user_id: txRecord.sellerId },
-            update: { balance: { increment: txRecord.amount } },
-            create: { clerk_user_id: txRecord.sellerId, balance: txRecord.amount }
-          })
-
-          console.log(`Saldo acreditado a ${txRecord.sellerId}: +$${txRecord.amount}`);
+      // Intentamos actualizar la transacción. Prisma solo lo hará si el estado NO es 'PAID'
+      const updateResult = await prisma.transaction.updateMany({
+        where: {
+          id: paymentInfo.external_reference,
+          status: { not: 'PAID' } // <-- Esta condición evita el doble cobro
+        },
+        data: {
+          status: finalStatus,
+          payment_method: paymentInfo.payment_method_id, 
         }
+      });
 
-        //LLAMADAS A LAS APPS DE SELLER Y BUYER SEGÚN EL ESTADO
+      // 2. Si count es 0, significa que no actualizamos ningún registro porque ya estaba en PAID, por lo que es un aviso duplicado y lo ignoramos.
+      if (updateResult.count === 0) {
+        console.log(`Aviso duplicado ignorado para: ${paymentInfo.external_reference}`);
+        return NextResponse.json({ success: true }, { status: 200 });
+      }
+
+      // si count no era 0
+      // Traemos la transacción actualizada (con sus items) para hacer la orquestación.
+      const txRecord = await prisma.transaction.findUnique({
+        where: { id: paymentInfo.external_reference },
+        include: { items: true }
+      });
+
+      // 4. Acreditamos la plata de forma segura
+      if (txRecord && finalStatus === 'PAID') {
+        await prisma.account.upsert({
+          where: { clerk_user_id: txRecord.sellerId },
+          update: { balance: { increment: txRecord.amount } },
+          create: { clerk_user_id: txRecord.sellerId, balance: txRecord.amount }
+        });
+        console.log(`Saldo acreditado a ${txRecord.sellerId}: +$${txRecord.amount}`);
+      }
+
+      //LLAMADAS A LAS APPS DE SELLER Y BUYER SEGÚN EL ESTADO
+      if(txRecord){
         try {
           console.log("Iniciando orquestación simulada...");
 
           //Llamada a Buyer App
           const buyerResponse = await notifyBuyerApp({
-            transactionId: txRecord.id,
+           transactionId: txRecord.id,
             status: finalStatus,
-            paymentMethod: txRecord.payment_method
-          });
+           paymentMethod: txRecord.payment_method
+         });
           
-          if(finalStatus === 'PAID'){
-            // 2. Llamada a Seller App
+         if(finalStatus === 'PAID'){
+           // 2. Llamada a Seller App
             const confirmResponse = await confirmOrderSellerApp({
               orderReference: txRecord.external_order_reference,
-              buyerId: txRecord.buyerId,
+             buyerId: txRecord.buyerId,
               items: txRecord.items,
               transactionId: txRecord.id
-            });
+           });
           }
-          console.log("Orquestación finalizada");
+         console.log("Orquestación finalizada");
 
         } catch (error) {
           console.error("Error en orquestación:", error);
           }
       }
     }
-    
     // 200 OK para Mercado Pago
     return NextResponse.json({ success: true }, { status: 200 });
 
