@@ -99,8 +99,7 @@ export default async function DashboardPage({
             </div>
           </section>
 
-        <section className="space-y-4">
-          <h2 className="text-xl text-gray-900 font-bold">Filtrar Movimientos</h2>
+        <section>
           <TransactionFilters />
         </section>
 
