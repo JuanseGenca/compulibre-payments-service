@@ -23,6 +23,7 @@ export default async function DashboardPage({
   const query = (resolvedParams.q as string) || "";
   const from = (resolvedParams.from as string) || "";
   const to = (resolvedParams.to as string) || "";
+  const status = (resolvedParams.status as string) || "";
   
   const pageSize = 10;
   const skip = (page - 1) * pageSize;
@@ -39,6 +40,7 @@ export default async function DashboardPage({
         },
       },
     }),
+    ...(status && status !== "ALL" && { status: status }),
     created_at: (from && to) ? {
       gte: new Date(from),
       lte: new Date(to + "T23:59:59.999Z"), // Para incluir todo el día final

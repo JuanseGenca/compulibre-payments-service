@@ -49,6 +49,22 @@ export default function TransactionFilters() {
           onChange={(e) => handleFilter("to", e.target.value)}
         />
       </div>
+      <div className="flex flex-col w-full md:w-auto">
+        <label htmlFor="statusFilter" className="text-xs text-gray-500 font-medium mb-1">
+          Estado
+        </label>
+        <select
+          id="statusFilter"
+          className="border border-gray-300 rounded-lg p-2 text-sm text-gray-700 bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+          defaultValue={searchParams.get("status") || "ALL"}
+          onChange={(e) => handleFilter("status", e.target.value)}
+        >
+          <option value="ALL">Todos los estados</option>
+          <option value="PAID">Cobrados (PAID)</option>
+          <option value="PENDING">Pendientes (PENDING)</option>
+          <option value="REJECTED">Rechazados (REJECTED)</option>
+        </select>
+      </div>
     </div>
   );
 }
