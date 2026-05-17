@@ -6,6 +6,7 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { TransactionItem } from "@prisma/client";
+import UserSalesChart from "@/components/UserSalesCharts";
 
 export default async function DashboardPage({
   searchParams,
@@ -98,6 +99,14 @@ export default async function DashboardPage({
               </Link>
             </div>
           </section>
+
+          {/* GRÁFICO DE VENTAS */}
+          <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Rendimiento de Ventas</h2>
+          <p className="text-sm text-gray-500 mb-4">Evolución de tus ingresos cobrados.</p>
+          
+          <UserSalesChart ventas={misVentas} />
+        </section>
 
         <section>
           <TransactionFilters />
