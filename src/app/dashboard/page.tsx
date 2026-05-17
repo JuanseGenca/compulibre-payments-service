@@ -23,6 +23,7 @@ export default async function DashboardPage({
   const query = (resolvedParams.q as string) || "";
   const from = (resolvedParams.from as string) || "";
   const to = (resolvedParams.to as string) || "";
+  const status = (resolvedParams.status as string) || "";
   
   const pageSize = 10;
   const skip = (page - 1) * pageSize;
@@ -39,6 +40,7 @@ export default async function DashboardPage({
         },
       },
     }),
+    ...(status && status !== "ALL" && { status: status }),
     created_at: (from && to) ? {
       gte: new Date(from),
       lte: new Date(to + "T23:59:59.999Z"), // Para incluir todo el día final
@@ -97,8 +99,7 @@ export default async function DashboardPage({
             </div>
           </section>
 
-        <section className="space-y-4">
-          <h2 className="text-xl text-gray-900 font-bold">Filtrar Movimientos</h2>
+        <section>
           <TransactionFilters />
         </section>
 
@@ -117,33 +118,39 @@ export default async function DashboardPage({
                 <ul className="space-y-4">
                   {misVentas.map((tx) => (
                   <li key={tx.id} className="flex justify-between items-center p-4 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
-                    <div className="flex flex-col">
-                     {/* Título dinámico de la venta */}
-                      <p className="font-semibold text-gray-900 line-clamp-1" title={tx.items && tx.items.length > 0 ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ") : "Venta sin ítems"}>
-                        {tx.items && tx.items.length > 0
-                          ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ")
-                          : "Venta sin ítems detallados"}
-                      </p>
-        
-                      {/* Monto y fecha en la misma línea para ahorrar espacio */}
-                      <div className="flex items-center gap-2 mt-1">
-                        <p className="text-sm font-bold text-blue-600">
-                          $ {Number(tx.amount).toLocaleString("es-AR")}
+                    <Link href={`/dashboard/transacciones/${tx.id}`} className="flex justify-between items-center p-4 w-full">
+                      <div className="flex flex-col">
+                        {/* Título dinámico de la venta */}
+                        <p className="font-semibold text-gray-900 line-clamp-1" title={tx.items && tx.items.length > 0 ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ") : "Venta sin ítems"}>
+                          {tx.items && tx.items.length > 0
+                            ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ")
+                            : "Venta sin ítems detallados"}
                         </p>
-                        <span className="text-gray-300">•</span>
-                          <p className="text-xs text-gray-400">
-                            {new Date(tx.created_at).toLocaleDateString("es-AR")}
-                          </p>             
+        
+                        {/* Monto y fecha en la misma línea para ahorrar espacio */}
+                        <div className="flex items-center gap-2 mt-1">
+                          <p className="text-sm font-bold text-blue-600">
+                            $ {Number(tx.amount).toLocaleString("es-AR")}
+                          </p>
+                          <span className="text-gray-300">•</span>
+                            <p className="text-xs text-gray-400">
+                              {new Date(tx.created_at).toLocaleDateString("es-AR")}
+                            </p>             
+                        </div>
                       </div>
-                    </div>
+                    
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        tx.status === "PAID" ? "bg-green-100 text-green-700" :
+                        tx.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
+                        "bg-red-100 text-red-700"
+                        }`}>
+                        {tx.status}
+                      </span>
+                      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
 
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      tx.status === "PAID" ? "bg-green-100 text-green-700" :
-                      tx.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
-                      "bg-red-100 text-red-700"
-                      }`}>
-                      {tx.status}
-                    </span>
+                    </Link>
                   </li>
                ))}
                 </ul>
@@ -163,6 +170,7 @@ export default async function DashboardPage({
                 <ul className="space-y-4">
                   {misCompras.map((tx) => (
                     <li key={tx.id} className="flex justify-between items-center p-4 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
+                      <Link href={`/dashboard/transacciones/${tx.id}`} className="flex justify-between items-center p-4 w-full">
                       <div className="flex flex-col">
                         {/* Título dinámico de la compra */}
                         <p className="font-semibold text-gray-900 line-clamp-1" title={tx.items && tx.items.length > 0 ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ") : "Compra sin ítems"}>
@@ -190,6 +198,11 @@ export default async function DashboardPage({
                         }`}>
                         {tx.status}
                       </span>
+                      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      </svg>
+
+                      </Link>
                     </li>
                   ))}
               </ul>
