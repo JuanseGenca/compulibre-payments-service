@@ -7,6 +7,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { TransactionItem } from "@prisma/client";
 import UserSalesChart from "@/components/UserSalesCharts";
+import Accordion from "@/components/accordion";
+
 
 export default async function DashboardPage({
   searchParams,
@@ -113,14 +115,12 @@ export default async function DashboardPage({
         </section>
 
         {/* Grilla principal: Izquierda Ventas, Derecha Compras */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           
           {/* COLUMNA VENTAS */}
-          <section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-              <h2 className="font-semibold text-gray-800 text-lg">Mis Ventas (Cobros)</h2>
-            </div>
-            <div className="p-6 flex-grow">
+          {/* Usamos <details> y le ponemos "open" para que arranque abierto por defecto */}
+          <Accordion title="Mis Ventas (Cobros)" defaultOpen={true}>
+            
               {misVentas.length === 0 ? (
                 <p className="text-gray-400 text-center py-8">Aún no realizaste ninguna venta.</p>
               ) : (
@@ -164,15 +164,12 @@ export default async function DashboardPage({
                ))}
                 </ul>
               )}
-            </div>
-          </section>
+            
+          </Accordion>
 
           {/* COLUMNA COMPRAS */}
-          <section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-              <h2 className="font-semibold text-gray-800 text-lg">Mis Compras (Pagos)</h2>
-            </div>
-            <div className="p-6 flex-grow">
+          <Accordion title="Mis Compras (Pagos)" defaultOpen={true}>
+            
               {misCompras.length === 0 ? (
                 <p className="text-gray-400 text-center py-8">Aún no realizaste ninguna compra.</p>
               ) : (
@@ -216,8 +213,8 @@ export default async function DashboardPage({
                   ))}
               </ul>
               )}
-            </div>
-          </section>            
+            
+          </Accordion>            
         
         </div>
         <Pagination currentPage={page} hasMore={misVentas.length === pageSize || misCompras.length === pageSize} />
