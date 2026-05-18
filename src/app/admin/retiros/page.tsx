@@ -8,11 +8,7 @@ import ApprovePayoutButton from "@/components/AprobarPayout";
 
 export default async function AdminRetirosPage() {
 
-  const [transactions, retirosPendientes, retirosCompletados] = await Promise.all([
-        prisma.transaction.findMany({
-            orderBy: { created_at: 'desc' }, // Ajustar a created_at si es necesario
-            take: 20 
-        }),
+  const [retirosPendientes, retirosCompletados] = await Promise.all([
         prisma.payout.findMany({
             where: { status: "PROCESSING" },
             include: { account: true },
@@ -55,7 +51,7 @@ export default async function AdminRetirosPage() {
         </header>
 
           {/* SECCIÓN 2: Retiros Pendientes */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mt-8">
             <div className="p-6 border-b border-gray-100 bg-orange-50/30">
               <h2 className="font-semibold text-gray-800 flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-orange-500"></span>
@@ -92,7 +88,7 @@ export default async function AdminRetirosPage() {
           </div>
 
           {/* SECCIÓN 3: Retiros Completados */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden opacity-80">
+          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden opacity-80 mt-8">
             <div className="p-6 border-b border-gray-100 bg-green-50/30">
               <h2 className="font-semibold text-gray-800 flex items-center gap-2 text-gray-500">
                 <span className="w-2 h-2 rounded-full bg-green-500"></span>
