@@ -6,6 +6,9 @@ import { auth } from "@clerk/nextjs/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { TransactionItem } from "@prisma/client";
+import UserSalesChart from "@/components/UserSalesCharts";
+import Accordion from "@/components/accordion";
+
 
 export default async function DashboardPage({
   searchParams,
@@ -99,19 +102,32 @@ export default async function DashboardPage({
             </div>
           </section>
 
+          {/* GRÁFICO DE VENTAS */}
+          <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
+          <h2 className="text-xl font-bold text-gray-900 mb-2">Rendimiento de Ventas</h2>
+          <p className="text-sm text-gray-500 mb-4">Evolución de tus ingresos cobrados.</p>
+          
+          <UserSalesChart ventas={misVentas} />
+        </section>
+
         <section>
           <TransactionFilters />
         </section>
 
         {/* Grilla principal: Izquierda Ventas, Derecha Compras */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           
           {/* COLUMNA VENTAS */}
-          <section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-              <h2 className="font-semibold text-gray-800 text-lg">Mis Ventas (Cobros)</h2>
-            </div>
-            <div className="p-6 flex-grow">
+          {/* Usamos <details> y le ponemos "open" para que arranque abierto por defecto */}
+          <Accordion 
+            title="Mis Ventas (Cobros)" 
+            defaultOpen={true}
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            }>
+            
               {misVentas.length === 0 ? (
                 <p className="text-gray-400 text-center py-8">Aún no realizaste ninguna venta.</p>
               ) : (
@@ -155,15 +171,19 @@ export default async function DashboardPage({
                ))}
                 </ul>
               )}
-            </div>
-          </section>
+            
+          </Accordion>
 
           {/* COLUMNA COMPRAS */}
-          <section className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-            <div className="p-6 border-b border-gray-100 bg-gray-50/50">
-              <h2 className="font-semibold text-gray-800 text-lg">Mis Compras (Pagos)</h2>
-            </div>
-            <div className="p-6 flex-grow">
+          <Accordion 
+            title="Mis Compras (Pagos)" 
+            defaultOpen={true}
+            icon={
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+              </svg>
+            }>
+            
               {misCompras.length === 0 ? (
                 <p className="text-gray-400 text-center py-8">Aún no realizaste ninguna compra.</p>
               ) : (
@@ -207,8 +227,8 @@ export default async function DashboardPage({
                   ))}
               </ul>
               )}
-            </div>
-          </section>            
+            
+          </Accordion>            
         
         </div>
         <Pagination currentPage={page} hasMore={misVentas.length === pageSize || misCompras.length === pageSize} />
