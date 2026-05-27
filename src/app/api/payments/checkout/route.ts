@@ -12,9 +12,28 @@ interface ItemCarrito {
 
 export async function POST(request: Request) {
   try {
+
+    // 1. Extraemos la llave del encabezado personalizado 'x-api-key'
+    const apiKey = request.headers.get("x-api-key");
+
+    // 2. Comparamos con la llave de nuestro entorno
+    if (!apiKey || apiKey !== process.env.PAYMENTS_API_KEY) {
+      return NextResponse.json(
+        { error: "Acceso denegado. API Key inválida o faltante." },
+        { status: 401 } // 401 Unauthorized
+      );
+    }
+
     // Leemos el body según el contrato de la API
     const body = await request.json();
     const { buyerId, sellerId, orderReference, amount, currency, items} = body;
+
+    if (!buyerId || !sellerId || !amount || !items || !Array.isArray(items) || items.length === 0) {
+      return NextResponse.json(
+        { error: "Faltan campos obligatorios o el carrito está vacío." }, 
+        { status: 400 } // 400 Bad Request
+      );
+    }
 
     // 3. Guardamos la transacción en estado PENDING en nuestra base de datos
     const transaction = await prisma.transaction.create({
@@ -46,11 +65,13 @@ export async function POST(request: Request) {
        currency_id: currency || "ARS",
     }));
 
+    const webhookUrl = process.env.WEBHOOK_URL;
+
     const result = await preference.create({
       body: {
         items: mpItems, 
         external_reference: transaction.id,
-        notification_url: `https://proyecto-c-payments-compulibre.vercel.app/api/webhooks/mercadopago`,
+        notification_url: webhookUrl,
       },
     });
 
