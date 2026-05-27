@@ -104,6 +104,11 @@ export default async function TransactionDetailPage({
                 <p className="text-gray-400 font-medium">ID de Transacción</p>
                 <p className="text-gray-700 text-xs truncate" title={tx.id}>{tx.id}</p>
               </div>
+              <div>
+                <p className="text-gray-400 font-medium">Direccion del comprador</p>
+                <p className="text-gray-700 text-xs truncate" title={tx.buyerAddress}>{tx.buyerAddress}</p>
+              </div>
+              
             </div>
           </div>
 

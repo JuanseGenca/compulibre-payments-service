@@ -25,6 +25,9 @@ model Transaction {
   buyerId                  String
   payment_method           String?
   items                    TransactionItem[]
+  buyerAddress             String
+  buyerCodigoPostal        Int
+
 }
 
 model TransactionItem {
