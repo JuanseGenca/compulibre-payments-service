@@ -35,19 +35,19 @@ export default async function AdminRetirosPage() {
           <span className="text-gray-900 font-medium">Gestión de Retiros</span>
         </div>
 
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <header className="mb-8 flex justify-between items-end border-b pb-4">
           <div>
             <h1 className="text-3xl font-black text-gray-900">Solicitudes de Retiro</h1>
             <p className="text-gray-500">Administrá las liquidaciones de saldo de los vendedores.</p>
           </div>
           
-          {/* Un indicador rápido para el Admin */}
-          <div className="bg-white border border-gray-200 px-4 py-2 rounded-xl shadow-sm text-sm">
-            <span className="text-gray-500">Pendientes: </span>
-            <span className="font-bold text-orange-600">
-              {retirosPendientes.length}
-            </span>
-          </div>
+          <Link 
+            href="/admin"
+            className="text-base font-medium text-blue-600 hover:text-blue-800 transition-colors"
+          >
+            &larr; Volver al Panel
+          </Link>
+          
         </header>
 
           {/* SECCIÓN 2: Retiros Pendientes */}

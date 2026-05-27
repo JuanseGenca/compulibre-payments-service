@@ -31,9 +31,19 @@ export default async function AdminMetricasPage() {
           <span className="text-gray-900 font-medium">Métricas y Gráficos</span>
         </div>
 
-        <header>
-          <h1 className="text-3xl font-black text-gray-900">Rendimiento Global</h1>
-          <p className="text-gray-500">Análisis del flujo de dinero en CompuLibre Payments.</p>
+        <header className="mb-8 flex justify-between items-end border-b pb-4">
+          <div>
+            <h1 className="text-3xl font-black text-gray-900">Rendimiento Global</h1>
+            <p className="text-gray-500">Análisis del flujo de dinero en CompuLibre Payments.</p>
+          </div>
+
+          <Link 
+            href="/admin"
+            className="text-base font-medium text-purple-600 hover:text-purple-800 transition-colors"
+          >
+            &larr; Volver al Panel
+          </Link>
+
         </header>
 
         {/* TARJETAS DE INDICADORES (KPIs) */}

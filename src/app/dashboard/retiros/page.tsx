@@ -36,7 +36,7 @@ export default async function RetirosPage() {
           </div>
           <Link 
             href="/dashboard"
-            className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
+            className="text-base font-medium text-blue-600 hover:text-blue-800 transition-colors"
           >
             &larr; Volver al Panel
           </Link>
