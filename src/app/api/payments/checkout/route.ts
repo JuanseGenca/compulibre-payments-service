@@ -26,9 +26,9 @@ export async function POST(request: Request) {
 
     // Leemos el body según el contrato de la API
     const body = await request.json();
-    const { buyerId, sellerId, orderReference, amount, currency, items} = body;
+    const { buyerId, sellerId, orderReference, amount, currency, items, buyerAddres, buyerCodigoPostal} = body;
 
-    if (!buyerId || !sellerId || !amount || !items || !Array.isArray(items) || items.length === 0) {
+    if (!buyerId || !sellerId || !amount || !items || !Array.isArray(items) || items.length === 0 || !buyerAddres || !buyerCodigoPostal) {
       return NextResponse.json(
         { error: "Faltan campos obligatorios o el carrito está vacío." }, 
         { status: 400 } // 400 Bad Request
@@ -51,7 +51,9 @@ export async function POST(request: Request) {
             quantity: item.quantity,
             unit_price: item.unit_price 
           }))
-        }
+        },
+        buyerAddress: buyerAddres,
+        buyerCodigoPostal: buyerCodigoPostal,
       },
     });
 

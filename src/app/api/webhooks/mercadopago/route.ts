@@ -76,9 +76,11 @@ export async function POST(request: Request) {
            // 2. Llamada a Seller App
             const confirmResponse = await confirmOrderSellerApp({
               orderReference: txRecord.external_order_reference,
-             buyerId: txRecord.buyerId,
+              buyerId: txRecord.buyerId,
               items: txRecord.items,
-              transactionId: txRecord.id
+              transactionId: txRecord.id,
+              buyerAddress: txRecord.buyerAddress,
+              buyerCodigoPostal: txRecord.buyerCodigoPostal
            });
           }
          console.log("Orquestación finalizada");
