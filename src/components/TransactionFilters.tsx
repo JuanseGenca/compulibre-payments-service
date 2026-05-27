@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
 import { useState } from "react";
+import Accordion from "./accordion";
 
 export default function TransactionFilters() {
   const router = useRouter();
@@ -25,36 +26,18 @@ export default function TransactionFilters() {
   }
 
   return (
-     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-      
-      {/* EL BOTÓN QUE ABRE Y CIERRA */}
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors focus:outline-none"
-      >
-        <div className="flex items-center gap-2">
-          {/* Icono de filtro (opcional) */}
-          <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-          </svg>
-          <h2 className="text-lg text-gray-900 font-bold">Filtrar Movimientos</h2>
-        </div>
-
-        {/* Flechita que gira dependiendo del estado isOpen */}
-        <svg 
-          className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`} 
-          fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+    
+      <Accordion 
+        title="Filtrar Movimientos" 
+        defaultOpen={false}
+        icon={
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
         </svg>
-      </button>
+        }>
 
-      {/* EL CONTENEDOR DESPLEGABLE */}
-      {/* Si isOpen es true, se muestra. Si es false, desaparece. */}
-      {isOpen && (
-        <div className="p-4 border-t border-gray-200">
-          <div className="flex flex-col md:flex-row gap-4 items-end">
-            
+        <div className="flex flex-col md:flex-row gap-4 items-end">
+
             {/* INPUT DE BUSCADOR POR TEXTO (Ejemplo, adaptalo al tuyo) */}
             <div className="flex flex-col w-full md:w-1/3">
               <label className="text-xs text-gray-900 font-medium mb-1">Buscar producto</label>
@@ -109,10 +92,8 @@ export default function TransactionFilters() {
             </div>
 
 
-          </div>
         </div>
-      )}
-
-    </div>
+      </Accordion>
+    
   );
 }

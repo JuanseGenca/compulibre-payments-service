@@ -2,29 +2,18 @@ import Navbar from "@/components/navbar";
 import { prisma } from "@/lib/prisma";
 import ApprovePayoutButton from "@/components/AprobarPayout"; 
 import RejectPayoutButton from "@/components/RechazarPayout";
+import Link from "next/dist/client/link";
 
 export default async function AdminPage() {
   
-    // 1. Consultas a la base de datos
-    const [transactions, retirosPendientes, retirosCompletados] = await Promise.all([
-        prisma.transaction.findMany({
-            orderBy: { created_at: 'desc' }, // Ajustar a created_at si es necesario
-            take: 20 
-        }),
-        prisma.payout.findMany({
-            where: { status: "PROCESSING" },
-            include: { account: true },
-            orderBy: { id: "asc" },
-        }),
-        prisma.payout.findMany({
-            where: { status: "COMPLETED" },
-            include: { account: true },
-            orderBy: { id: "desc" }, // Los más recientes primero
-            take: 10 // Mostramos solo los últimos 10 para no saturar
-        })
-    ]);
+    // 1. Consulta las ultimas transacciones
+    const ultimasTransacciones = await prisma.transaction.findMany({
+    take: 10,
+    orderBy: { created_at: 'desc' },
+    include: { items: true }
+    });
   
-    const totalProcesado = transactions
+    const totalProcesado = ultimasTransacciones
         .filter(t => t.status === 'PAID')
         .reduce((acc, curr) => acc + Number(curr.amount), 0);
 
@@ -35,13 +24,15 @@ export default async function AdminPage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <main className="p-8">
+        {/* ESTADISTICAS */}
         <div className="max-w-7xl mx-auto">
           <header className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Panel de Administración</h1>
-            <p className="text-gray-500">Vista global de todas las transacciones del sistema.</p>
+            <p className="text-gray-500">Vista de las ultimas transacciones del sistema.</p>
           </header>
 
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+            <h2 className="sr-only">Resumen de Métricas Financieras</h2>
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
               <h3 className="text-sm font-medium text-gray-500 uppercase">Total Procesado</h3>
               <p className="text-2xl font-bold text-blue-600"> $ {totalProcesado.toLocaleString('es-AR')} </p>
@@ -52,12 +43,52 @@ export default async function AdminPage() {
             </div>
             <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
               <h3 className="text-sm font-medium text-gray-500 uppercase">Transacciones Totales</h3>
-              <p className="text-2xl font-bold text-gray-800">{transactions.length}</p>
+              <p className="text-2xl font-bold text-gray-800">{ultimasTransacciones.length}</p>
             </div>
-          </div>
+          </section>
+
+          {/* TARJETAS DE ACCESO DIRECTO */}
+          <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <Link href="/admin/retiros" className="group bg-white p-6 rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 shrink-0 bg-blue-100 text-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+              </div>
+
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Gestión de Retiros</h2>
+                <p className="text-sm text-gray-500 mt-1">Aprobar o rechazar solicitudes de liquidación.</p>
+              </div>
+
+            </div>
+            <svg className="w-6 h-6 text-gray-300 group-hover:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          </Link>
+
+          <Link href="/admin/metricas" className="group bg-white p-6 rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 shrink-0 bg-purple-100 text-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                </svg>
+              </div>
+
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Métricas y Gráficos</h2>
+                <p className="text-sm text-gray-500 mt-1">Análisis profundo del volumen transaccional.</p>
+              </div>
+              
+            </div>
+            <svg className="w-6 h-6 text-gray-300 group-hover:text-purple-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          </Link>
+
+        </section>
+
 
           {/* SECCIÓN 1: Movimientos Globales */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mb-8">
+          <section className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden mt-8">
             <div className="p-6 border-b border-gray-100">
               <h2 className="font-semibold text-gray-800">Últimos movimientos globales</h2>
             </div>
@@ -73,14 +104,14 @@ export default async function AdminPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
-                  {transactions.length === 0 ? (
+                  {ultimasTransacciones.length === 0 ? (
                     <tr>
                       <td colSpan={5} className="p-8 text-center text-gray-400">
                         No hay transacciones registradas todavía.
                       </td>
                     </tr>
                   ) : (
-                    transactions.map((tx) => (
+                    ultimasTransacciones.map((tx) => (
                       <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
                         <td className="p-4 font-mono text-xs">{tx.id}</td>
                         <td className="p-4">{tx.sellerId}</td>
@@ -106,71 +137,9 @@ export default async function AdminPage() {
                 </tbody>
               </table>
             </div>
-          </div>
+          </section>
 
-          {/* SECCIÓN 2: Retiros Pendientes */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
-            <div className="p-6 border-b border-gray-100 bg-orange-50/30">
-              <h2 className="font-semibold text-gray-800 flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-orange-500"></span>
-                Retiros Pendientes de Transferencia
-              </h2>
-            </div>
-            <div className="p-6">
-              {retirosPendientes.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">No hay retiros pendientes. ¡Todo al día!</p>
-              ) : (
-                <ul className="space-y-4">
-                  {retirosPendientes.map((payout) => (
-                    <li key={payout.id} className="flex flex-col md:flex-row justify-between md:items-center p-4 border border-gray-100 rounded-xl gap-4 hover:bg-gray-50 transition-colors">
-                      <div>
-                        <p className="font-bold text-xl text-gray-900">$ {payout.amount.toLocaleString('es-AR')}</p>
-                        <p className="text-sm text-gray-600 mt-1">
-                          CBU Destino: <span className="font-mono bg-white border px-2 py-1 rounded select-all">{payout.destination_cbu}</span>
-                        </p>
-                        <p className="text-xs text-gray-400 mt-2">Usuario: {payout.account_id}</p>
-                      </div>
-                      
-                      <div className="flex items-center gap-2">
-                        {/* Botón de Rechazo (Nuevo) */}
-                       <RejectPayoutButton payoutId={payout.id} />
-      
-                      {/* Botón de Aprobación (Ya lo tenías) */}
-                        <ApprovePayoutButton payoutId={payout.id} />
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-
-          {/* SECCIÓN 3: Retiros Completados */}
-          <div className="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden opacity-80">
-            <div className="p-6 border-b border-gray-100 bg-green-50/30">
-              <h2 className="font-semibold text-gray-800 flex items-center gap-2 text-gray-500">
-                <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                Retiros Completados (Historial)
-              </h2>
-            </div>
-            <div className="p-6">
-              {retirosCompletados.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">Aún no se han completado retiros.</p>
-              ) : (
-                <ul className="space-y-4">
-                  {retirosCompletados.map((payout) => (
-                    <li key={payout.id} className="flex justify-between items-center p-4 border border-gray-50 rounded-xl bg-gray-50/50 grayscale">
-                      <div>
-                        <p className="font-semibold text-gray-900">$ {payout.amount.toLocaleString('es-AR')}</p>
-                        <p className="text-xs text-gray-500">CBU Destino: {payout.destination_cbu}</p>
-                      </div>
-                      <span className="text-xs font-bold text-green-600 uppercase">Pagado</span>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
+          
 
         </div>
       </main>
