@@ -17,20 +17,20 @@ export async function createPayout(formData: FormData) {
   // Usamos una transacción de Prisma para que todo ocurra o nada ocurra
   try {
     await prisma.$transaction(async (tx) => {
-      // 1. Buscamos la cuenta y bloqueamos la fila para evitar "race conditions"
-      const account = await tx.account.findUnique({
-        where: { clerk_user_id: userId },
+      const accountUpdate = await tx.account.updateMany({
+        where: { 
+          clerk_user_id: userId,
+          balance: { gte: amount } // La clave: Solo actualiza si el saldo es Mayor o Igual (gte)
+        },
+        data: { 
+          balance: { decrement: amount } 
+        },
       });
 
-      if (!account || account.balance < amount) {
-        throw new Error("Saldo insuficiente");
+      // Si count es 0, significa que no encontró la cuenta O que no tenía saldo suficiente
+      if (accountUpdate.count === 0) {
+        throw new Error("Saldo insuficiente o cuenta inexistente");
       }
-
-      // 2. Descontamos el saldo
-      await tx.account.update({
-        where: { clerk_user_id: userId },
-        data: { balance: { decrement: amount } },
-      });
 
       // 3. Creamos el registro del retiro
       await tx.payout.create({
