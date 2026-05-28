@@ -8,7 +8,7 @@ export async function markPayoutAsCompleted(payoutId: string) {
   // 1. Doble validación de seguridad: Nos aseguramos de que sea el Admin
   const user = await currentUser();
   if (user?.publicMetadata?.role !== "admin") {
-    throw new Error("Acceso denegado. Solo administradores pueden aprobar retiros.");
+    return { error: "No autorizado" };
   }
 
 try{
