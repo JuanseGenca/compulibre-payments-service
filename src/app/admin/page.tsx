@@ -114,7 +114,9 @@ export default async function AdminPage() {
                     ultimasTransacciones.map((tx) => (
                       <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
                         <td className="p-4 font-mono text-xs">{tx.id}</td>
-                        <td className="p-4">{tx.sellerId}</td>
+                        <td className="p-4">
+                          {tx.items.length === 1 ? tx.items[0].sellerId : `Múltiples (${tx.items.length} ítems)`}
+                        </td>
                         <td className="p-4 font-medium text-gray-900">
                           $ {Number(tx.amount).toLocaleString('es-AR')}
                         </td>
