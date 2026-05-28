@@ -5,6 +5,16 @@ Aplicación **Payments** del [Proyecto IAW 2026](https://iaw-2026.github.io/proy
 
 Esta app corresponde al módulo de pagos en los proyectos de tipo **A (Transporte)**, **B (Delivery)** y **C (Marketplace)**.
 
+Credenciales
+    usuario final: 
+        correo: usuariopaymenst+clerk_test@example.com
+        password: UsuarioPayments
+    
+    administrador:
+        correo:adminpayments+clerk_test@example.com
+        password: AdminPayments
+
+
 ---
 
 Enunciado completo: <https://iaw-2026.github.io/proyecto/>
