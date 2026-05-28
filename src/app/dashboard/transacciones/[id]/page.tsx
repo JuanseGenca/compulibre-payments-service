@@ -97,7 +97,7 @@ export default async function TransactionDetailPage({
                 Detalle de productos {esVendedor && "(Tus artículos)"}
               </h2>
               <ul className="space-y-3">
-                {tx.items.map((item) => (
+                {misItems.map((item) => (
                   <li key={item.id} className="flex justify-between items-center text-gray-700">
                     <span className="font-medium">
                       <span className="text-gray-400 mr-2">{item.quantity}x</span>
