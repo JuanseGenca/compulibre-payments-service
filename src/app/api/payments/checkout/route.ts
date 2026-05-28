@@ -8,6 +8,7 @@ interface ItemCarrito {
   name: string;
   quantity: number;
   unit_price: number;
+  sellerId: string;
 }
 
 export async function POST(request: Request) {
@@ -26,9 +27,9 @@ export async function POST(request: Request) {
 
     // Leemos el body según el contrato de la API
     const body = await request.json();
-    const { buyerId, sellerId, orderReference, amount, currency, items, buyerAddres, buyerCodigoPostal} = body;
+    const { buyerId, buyerAddress, buyerCodigoPostal, orderReference, amount, currency, items} = body;
 
-    if (!buyerId || !sellerId || !amount || !items || !Array.isArray(items) || items.length === 0 || !buyerAddres || !buyerCodigoPostal) {
+    if (!buyerId || !amount || !items || !Array.isArray(items) || items.length === 0 || !buyerAddress || !buyerCodigoPostal) {
       return NextResponse.json(
         { error: "Faltan campos obligatorios o el carrito está vacío." }, 
         { status: 400 } // 400 Bad Request
@@ -41,19 +42,19 @@ export async function POST(request: Request) {
         external_order_reference: orderReference,
         amount: amount,
         currency: currency,
-        sellerId: sellerId,
         status: 'PENDING',
         buyerId: buyerId,
+        buyerAddress: buyerAddress,
+        buyerCodigoPostal: buyerCodigoPostal,
         items: {
           create: items.map((item: ItemCarrito) => ({
+            sellerId: item.sellerId,
             productId: item.productId,
             name: item.name,
             quantity: item.quantity,
             unit_price: item.unit_price 
           }))
         },
-        buyerAddress: buyerAddres,
-        buyerCodigoPostal: buyerCodigoPostal,
       },
     });
 

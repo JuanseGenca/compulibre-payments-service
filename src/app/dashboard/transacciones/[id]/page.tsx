@@ -21,12 +21,30 @@ export default async function TransactionDetailPage({
     include: { items: true },
   });
 
-  // Si no existe o no pertenece al usuario (seguridad básica)
-  if (!tx || (tx.sellerId !== userId && tx.buyerId !== userId)) {
+  if (!tx) {
     return notFound();
   }
 
-  const esVendedor = tx.sellerId === userId;
+  // 2. Determinamos el rol del usuario
+  const esComprador = tx.buyerId === userId;
+
+  // 3. Filtramos los ítems: el comprador ve todo, el vendedor ve solo lo suyo
+  const misItems = esComprador 
+    ? tx.items 
+    : tx.items.filter(item => item.sellerId === userId);
+
+  const esVendedor = misItems.length > 0 && !esComprador;
+
+  // Si no es el comprador y tampoco tiene ítems acá, no tiene permiso para ver esto
+  if (!esComprador && !esVendedor) {
+    return notFound();
+  }
+
+  // 4. Calculamos el monto a mostrar en el recibo principal
+  // El comprador ve el total general de la operación. El vendedor ve solo su ganancia.
+  const totalMostrar = esComprador 
+    ? tx.amount 
+    : misItems.reduce((total, item) => total + (item.unit_price * item.quantity), 0);
 
   return (
     <div className="min-h-screen bg-gray-50 print:bg-white flex flex-col">
@@ -54,8 +72,12 @@ export default async function TransactionDetailPage({
             }`}>
               {tx.status}
             </span>
-            <h1 className="text-4xl font-black text-gray-900 mt-4">
-              $ {tx.amount.toLocaleString("es-AR")} {tx.currency}
+
+            <p className="text-gray-500 font-medium text-sm mt-4 uppercase tracking-widest">
+              {esComprador ? "Total pagado" : "Ingreso por tus ventas"}
+            </p>
+            <h1 className="text-4xl font-black text-gray-900 mt-1">
+              $ {totalMostrar.toLocaleString("es-AR")} {tx.currency}
             </h1>
             <p className="text-gray-500 text-sm mt-1">
               {new Date(tx.created_at).toLocaleString("es-AR", { 
@@ -63,6 +85,7 @@ export default async function TransactionDetailPage({
                 timeStyle: 'short' 
               })}
             </p>
+
           </div>
 
           {/* Cuerpo del Recibo */}
@@ -70,7 +93,9 @@ export default async function TransactionDetailPage({
             
             {/* Detalle de Ítems */}
             <div>
-              <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">Detalle de productos</h2>
+              <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
+                Detalle de productos {esVendedor && "(Tus artículos)"}
+              </h2>
               <ul className="space-y-3">
                 {tx.items.map((item) => (
                   <li key={item.id} className="flex justify-between items-center text-gray-700">

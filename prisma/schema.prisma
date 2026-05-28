@@ -20,7 +20,6 @@ model Transaction {
   amount                   Float
   currency                 String   @default("ARS")
   status                   String   @default("PENDING") // PENDING, APPROVED, REJECTED
-  sellerId                 String
   created_at               DateTime @default(now())
   buyerId                  String
   payment_method           String?
@@ -32,6 +31,7 @@ model Transaction {
 
 model TransactionItem {
   id            String      @id @default(uuid())
+  sellerId      String
   productId     String
   quantity      Int
   name          String

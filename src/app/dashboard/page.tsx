@@ -54,8 +54,17 @@ export default async function DashboardPage({
   const [account, misVentas, misCompras] = await Promise.all([
     prisma.account.findUnique({ where: { clerk_user_id: userId } }),
     prisma.transaction.findMany({
-      where: { sellerId: userId, ...whereFilters },
-      include: { items: true },
+      where: { 
+        items: {
+          some: { sellerId: userId }
+        },
+        ...whereFilters 
+      },
+      include: { 
+        items: {
+          where: { sellerId: userId }
+        } 
+      },
       orderBy: { created_at: "desc" },
       take: pageSize,
       skip: skip,
@@ -132,7 +141,11 @@ export default async function DashboardPage({
                 <p className="text-gray-400 text-center py-8">Aún no realizaste ninguna venta.</p>
               ) : (
                 <ul className="space-y-4">
-                  {misVentas.map((tx) => (
+                  {misVentas.map((tx) => {
+                  // Calculamos cuánto dinero le corresponde a este vendedor de esta transacción
+                  const miGanancia = tx.items.reduce((total, item) => total + (item.unit_price * item.quantity), 0);
+
+                  return (
                   <li key={tx.id} className="flex justify-between items-center p-4 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
                     <Link href={`/dashboard/transacciones/${tx.id}`} className="flex justify-between items-center p-4 w-full">
                       <div className="flex flex-col">
@@ -146,7 +159,7 @@ export default async function DashboardPage({
                         {/* Monto y fecha en la misma línea para ahorrar espacio */}
                         <div className="flex items-center gap-2 mt-1">
                           <p className="text-sm font-bold text-blue-600">
-                            $ {Number(tx.amount).toLocaleString("es-AR")}
+                            $ {miGanancia.toLocaleString("es-AR")}
                           </p>
                           <span className="text-gray-300">•</span>
                             <p className="text-xs text-gray-400">
@@ -168,7 +181,8 @@ export default async function DashboardPage({
 
                     </Link>
                   </li>
-               ))}
+                  );
+                  })}
                 </ul>
               )}
             

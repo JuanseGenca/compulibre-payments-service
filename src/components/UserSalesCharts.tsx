@@ -16,6 +16,12 @@ interface Transaction {
   amount: number;
   created_at: Date;
   status: string;
+  items?: TransactionItem[];
+}
+
+interface TransactionItem {
+  unit_price: number;
+  quantity: number;
 }
 
 export default function UserSalesChart({ ventas }: { ventas: Transaction[] }) {
@@ -34,7 +40,12 @@ export default function UserSalesChart({ ventas }: { ventas: Transaction[] }) {
       if (!acc[fecha]) {
         acc[fecha] = 0;
       }
-      acc[fecha] += Number(curr.amount);
+
+      const gananciaReal = curr.items 
+        ? curr.items.reduce((total, item) => total + (item.unit_price * item.quantity), 0)
+        : 0;
+
+      acc[fecha] += gananciaReal;
       return acc;
     }, {});
 

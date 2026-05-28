@@ -50,14 +50,26 @@ export async function POST(request: Request) {
         include: { items: true }
       });
 
-      // 4. Acreditamos la plata de forma segura
-      if (txRecord && finalStatus === 'PAID') {
-        await prisma.account.upsert({
-          where: { clerk_user_id: txRecord.sellerId },
-          update: { balance: { increment: txRecord.amount } },
-          create: { clerk_user_id: txRecord.sellerId, balance: txRecord.amount }
-        });
-        console.log(`Saldo acreditado a ${txRecord.sellerId}: +$${txRecord.amount}`);
+      if(txRecord && finalStatus === 'PAID'){
+
+        const gananciasPorVendedor: Record<string, number> = {};
+        for (const item of txRecord.items) {
+          if (!gananciasPorVendedor[item.sellerId]) {
+            gananciasPorVendedor[item.sellerId] = 0;
+          }
+          gananciasPorVendedor[item.sellerId] += (item.unit_price * item.quantity);
+        }
+
+        for (const sellerId in gananciasPorVendedor) {
+          const ganancia = gananciasPorVendedor[sellerId];
+    
+          await prisma.account.upsert({
+            where: { clerk_user_id: sellerId },
+            update: { balance: { increment: ganancia } },
+            create: { clerk_user_id: sellerId, balance: ganancia }
+          });
+          console.log(`Saldo acreditado a ${sellerId}: +$${ganancia}`);
+        }
       }
 
       //LLAMADAS A LAS APPS DE SELLER Y BUYER SEGÚN EL ESTADO
