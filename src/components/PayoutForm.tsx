@@ -5,27 +5,45 @@ import { createPayout } from "@/app/actions/payouts";
 
 export default function PayoutForm() {
   const [loading, setLoading] = useState(false);
+  const [mensajeError, setMensajeError] = useState("");
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setLoading(true);
+    setMensajeError("");
     
-    const formData = new FormData(e.currentTarget);
-    const result = await createPayout(formData);
+    try {
+      const formData = new FormData(e.currentTarget);
+      const result = await createPayout(formData);
 
-    if (result.error) {
-      alert("Error: " + result.error);
-    } else {
-      alert("¡Retiro solicitado con éxito!");
-      (e.target as HTMLFormElement).reset();
+      // Si tu Server Action devuelve algo como { error: "CBU Inválido" }
+      if (result?.error) {
+        setMensajeError(result.error);
+      } else {
+        alert("¡Retiro solicitado con éxito!");
+        (e.target as HTMLFormElement).reset();
+      }
+    } catch (error) {
+      // Si el servidor "crashea" o tira un throw explícito que no atajaste
+      console.error("Error capturado en el cliente:", error);
+      setMensajeError("Error interno procesando el retiro. Revisá los datos.");
+    } finally {
+      // MAGIA: El finally se ejecuta SIEMPRE. Si sale bien o si sale mal, apaga el botón.
+      setLoading(false);
     }
-    setLoading(false);
+    
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
       <h3 className="text-lg font-semibold text-gray-800">Solicitar Retiro</h3>
       
+      {mensajeError && (
+        <div className="p-3 bg-red-100 text-red-700 text-sm rounded-xl border border-red-200 font-medium">
+          {mensajeError}
+        </div>
+      )}
+
       <div>
         <label className="block text-sm font-medium text-gray-900">Monto a retirar</label>
         <input 

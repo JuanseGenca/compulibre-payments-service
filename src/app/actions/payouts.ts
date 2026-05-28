@@ -6,13 +6,14 @@ import { revalidatePath } from "next/cache";
 
 export async function createPayout(formData: FormData) {
   const { userId } = await auth();
-  if (!userId) throw new Error("No autorizado");
+
+  if (!userId) return { error: "No autorizado" };
 
   const amount = parseFloat(formData.get("amount") as string);
   const cbu = formData.get("cbu") as string;
 
-  if (isNaN(amount) || amount <= 0) throw new Error("Monto inválido");
-  if (!cbu || cbu.length < 22) throw new Error("CBU inválido");
+  if (isNaN(amount) || amount <= 0) return { error: "Monto invalido" };
+  if (!cbu || cbu.length < 22) return { error: "CBU inválido" };
 
   // Usamos una transacción de Prisma para que todo ocurra o nada ocurra
   try {
@@ -29,7 +30,7 @@ export async function createPayout(formData: FormData) {
 
       // Si count es 0, significa que no encontró la cuenta O que no tenía saldo suficiente
       if (accountUpdate.count === 0) {
-        throw new Error("Saldo insuficiente o cuenta inexistente");
+        throw new Error("Saldo insuficiente para realizar este retiro.");
       }
 
       // 3. Creamos el registro del retiro
@@ -50,6 +51,6 @@ export async function createPayout(formData: FormData) {
     return { success: true };
 
   } catch (error: any) {
-    return { error: error.message };
+    return { error: error.message || "Error procesando el retiro" };
   }
 }
