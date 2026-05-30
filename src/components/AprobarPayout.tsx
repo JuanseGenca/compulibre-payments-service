@@ -8,7 +8,7 @@ export default function ApprovePayoutButton({ payoutId }: { payoutId: string }) 
 
   async function handleApprove() {
     // Pequeña confirmación por si hacés clic sin querer
-    if (!window.confirm("¿Ya transferiste la plata a este CBU en la vida real?")) return;
+    if (!window.confirm("¿Ya transferiste la plata a este CBU?")) return;
 
     setLoading(true);
     try {
