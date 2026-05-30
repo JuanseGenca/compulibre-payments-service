@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import { TransactionItem } from "@prisma/client";
 import UserSalesChart from "@/components/UserSalesCharts";
 import Accordion from "@/components/accordion";
+import TarjetaSaldo from "@/components/TarjetaSaldo";
 
 
 export default async function DashboardPage({
@@ -114,36 +115,10 @@ export default async function DashboardPage({
           <p className="text-gray-500 mt-1">Gestioná tus movimientos y saldo.</p>
         </header>
 
-        {/* TARJETA PRINCIPAL DE SALDO (HERO CARD) */}
-          <section className="bg-white p-3 md:p-6 rounded-2xl border border-gray-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
-            <div>
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Saldo Disponible
-              </p>
-              <p className="text-3xl md:text-4xl font-bold text-gray-900 mt-1">
-                $ {saldoDisponible.toLocaleString("es-AR")}
-              </p>
-            </div>
-    
-            <div className="flex-shrink-0 w-full md:w-auto flex flex-col sm:flex-row gap-3">
-              <Link 
-                href="/dashboard/retiros"
-                className="flex items-center justify-center w-full sm:w-auto bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2.5 px-5 rounded-lg transition-all shadow-sm transform hover:-translate-y-0.5"
-              >
-                Retirar dinero / Historial
-              </Link>
+        <TarjetaSaldo saldoDisponible={saldoDisponible} />
 
-              <Link 
-                href="/dashboard/tickets"
-                className="flex items-center justify-center w-full sm:w-auto bg-blue-50 hover:bg-blue-100 text-blue-600 text-sm font-semibold py-2.5 px-5 rounded-lg transition-all shadow-sm transform hover:-translate-y-0.5"
-              >
-                Mis Reclamos
-              </Link>
-            </div>
-          </section>
-
-          {/* GRÁFICO DE VENTAS */}
-          <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
+        {/* GRÁFICO DE VENTAS */}
+        <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
           <h2 className="text-xl font-bold text-gray-900 mb-2">Rendimiento de Ventas</h2>
           <p className="text-sm text-gray-500 mb-4">Evolución de tus ingresos cobrados.</p>
           
