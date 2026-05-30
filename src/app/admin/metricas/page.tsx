@@ -19,9 +19,6 @@ export default async function AdminMetricasPage() {
   const ticketPromedio = txCobradas.length > 0 ? volumenTotal / txCobradas.length : 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
-      
       <main className="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full space-y-6">
         
         {/* Breadcrumb */}
@@ -89,6 +86,5 @@ export default async function AdminMetricasPage() {
         </section>
 
       </main>
-    </div>
   );
 }

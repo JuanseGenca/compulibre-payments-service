@@ -1,7 +1,5 @@
 import Navbar from "@/components/navbar";
 import { prisma } from "@/lib/prisma";
-import ApprovePayoutButton from "@/components/AprobarPayout"; 
-import RejectPayoutButton from "@/components/RechazarPayout";
 import Link from "next/dist/client/link";
 
 export default async function AdminPage() {
@@ -13,39 +11,14 @@ export default async function AdminPage() {
     include: { items: true }
     });
   
-    const totalProcesado = ultimasTransacciones
-        .filter(t => t.status === 'PAID')
-        .reduce((acc, curr) => acc + Number(curr.amount), 0);
-
-    const comisiones = totalProcesado * 0.05;
-
-
     return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
       <main className="p-8">
-        {/* ESTADISTICAS */}
+        
         <div className="max-w-7xl mx-auto">
           <header className="mb-8">
             <h1 className="text-3xl font-bold text-gray-900">Panel de Administración</h1>
             <p className="text-gray-500">Vista de las ultimas transacciones del sistema.</p>
           </header>
-
-          <section className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <h2 className="sr-only">Resumen de Métricas Financieras</h2>
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-              <h3 className="text-sm font-medium text-gray-500 uppercase">Total Procesado</h3>
-              <p className="text-2xl font-bold text-blue-600"> $ {totalProcesado.toLocaleString('es-AR')} </p>
-            </div>
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-              <h3 className="text-sm font-medium text-gray-500 uppercase">Comisiones (5%)</h3>
-              <p className="text-2xl font-bold text-green-600"> $ {comisiones.toLocaleString('es-AR')} </p>
-            </div>
-            <div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm">
-              <h3 className="text-sm font-medium text-gray-500 uppercase">Transacciones Totales</h3>
-              <p className="text-2xl font-bold text-gray-800">{ultimasTransacciones.length}</p>
-            </div>
-          </section>
 
           {/* TARJETAS DE ACCESO DIRECTO */}
           <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -159,10 +132,8 @@ export default async function AdminPage() {
             </div>
           </section>
 
-          
-
         </div>
       </main>
-    </div>
+    
   );
 }

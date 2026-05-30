@@ -23,8 +23,6 @@ export default async function AdminRetirosPage() {
     ]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
       <main className="p-8">
         <div className="max-w-7xl mx-auto">
           
@@ -116,7 +114,5 @@ export default async function AdminRetirosPage() {
 
         </div>
       </main>
-    </div>
-    
   );
 }
