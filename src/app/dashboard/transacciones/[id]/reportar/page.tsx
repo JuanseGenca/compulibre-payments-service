@@ -33,7 +33,7 @@ export default function ReportarProblemaPage({
       if (result?.error) {
         setMensajeError(result.error);
       } else {
-        alert("Tu reporte fue enviado con éxito. Un administrador lo revisará a la brevedad.");
+        alert("Tu reporte fue enviado con éxito. Un administrador lo revisará a la brevedad. Presta atencion al email asociado a tu cuenta!");
         // Lo devolvemos a la página de la transacción
         router.push(`/dashboard/transacciones/${transactionId}`); 
       }
