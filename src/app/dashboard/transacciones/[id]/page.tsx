@@ -142,6 +142,17 @@ export default async function TransactionDetailPage({
             <p className="text-gray-400 text-xs print:text-gray-500">CompuLibre Payments - Comprobante oficial de operación</p>
           </div>
         </div>
+
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <p className="text-sm text-gray-500 mb-3">¿Tuviste algún problema con esta compra?</p>
+            <Link 
+              href={`/dashboard/transacciones/${tx.id}/reportar`}
+              className="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-red-600 font-medium py-2 px-4 rounded-lg transition-colors"
+            >
+              Reportar un problema
+            </Link>
+        </div>
+        
       </main>
     </div>
   );
