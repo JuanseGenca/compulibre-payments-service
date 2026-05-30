@@ -50,11 +50,7 @@ export default async function TransactionDetailPage({
     : misItems.reduce((total, item) => total + (item.unit_price * item.quantity), 0);
 
   return (
-    <div className="min-h-screen bg-gray-50 print:bg-white flex flex-col">
-      <div className="print:hidden">
-        <Navbar />
-      </div>
-      <main className="flex-grow p-4 md:p-8 max-w-3xl mx-auto w-full print:p-0">
+      <main className="flex-grow p-4 md:p-8 max-w-3xl mx-auto w-full print:p-0 print:bg-white">
         
         <div className="flex justify-between items-center mb-6 print:hidden">
             <Link 
@@ -159,6 +155,5 @@ export default async function TransactionDetailPage({
         )}
         
       </main>
-    </div>
   );
 }

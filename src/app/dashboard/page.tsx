@@ -106,9 +106,6 @@ export default async function DashboardPage({
   const hasMoreItems = (skip + pageSize) < Math.max(totalVentas, totalCompras);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
-
       <main className="flex-grow p-4 md:p-8 max-w-screen-2xl mx-auto w-full space-y-8">
         <header>
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Mi Panel</h1>
@@ -161,6 +158,5 @@ export default async function DashboardPage({
         </div>
         <Pagination currentPage={page} hasMore={hasMoreItems} />
       </main>
-    </div>
   );
 }

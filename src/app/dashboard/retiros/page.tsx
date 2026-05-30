@@ -25,9 +25,6 @@ export default async function RetirosPage() {
   const saldoDisponible = account?.balance || 0;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
-
       <main className="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full">
         <header className="mb-8 flex justify-between items-end border-b pb-4">
           <div>
@@ -105,6 +102,5 @@ export default async function RetirosPage() {
 
         </div>
       </main>
-    </div>
   );
 }

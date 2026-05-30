@@ -6,7 +6,7 @@ export default function Navbar() {
   
 
   return (
-    <nav className="h-16 flex justify-between items-center py-4 px-8 bg-white border-b border-gray-200">
+    <nav className="h-16 flex justify-between items-center py-4 px-8 bg-white border-b border-gray-200 print:hidden">
       {/* Logo / Nombre */}
       <Link href="/" className="text-2xl font-extrabold text-blue-600 tracking-tight">
         CompuLibre <span className="text-gray-800">Payments</span>
