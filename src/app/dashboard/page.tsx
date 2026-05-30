@@ -9,6 +9,7 @@ import { TransactionItem } from "@prisma/client";
 import UserSalesChart from "@/components/UserSalesCharts";
 import Accordion from "@/components/accordion";
 import TarjetaSaldo from "@/components/TarjetaSaldo";
+import ListaTransacciones from "@/components/ListaTransacciones";
 
 
 export default async function DashboardPage({
@@ -99,7 +100,6 @@ export default async function DashboardPage({
     prisma.transaction.count({ where: comprasWhere }), // Contamos el total de compras filtradas
   ]);
 
-
   const saldoDisponible = account?.balance || 0;
 
     // Calculamos si hay más páginas basado en el total real de la base de datos
@@ -133,126 +133,30 @@ export default async function DashboardPage({
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
           
           {/* COLUMNA VENTAS */}
-          {/* Usamos <details> y le ponemos "open" para que arranque abierto por defecto */}
-          <Accordion 
-            title="Mis Ventas (Cobros)" 
-            defaultOpen={true}
+          <ListaTransacciones 
+            title="Mis Ventas (Cobros)"
+            tipo="VENTA"
+            transacciones={misVentas}
+            emptyMessage="Aún no realizaste ninguna venta."
             icon={
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
-            }>
-            
-              {misVentas.length === 0 ? (
-                <p className="text-gray-400 text-center py-8">Aún no realizaste ninguna venta.</p>
-              ) : (
-                <ul className="space-y-4">
-                  {misVentas.map((tx) => {
-                  // Calculamos cuánto dinero le corresponde a este vendedor de esta transacción
-                  const miGanancia = tx.items.reduce((total, item) => total + (item.unit_price * item.quantity), 0);
-
-                  return (
-                  <li key={tx.id} className="flex justify-between items-center p-4 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
-                    <Link href={`/dashboard/transacciones/${tx.id}`} className="flex justify-between items-center p-4 w-full">
-                      <div className="flex flex-col">
-                        {/* Título dinámico de la venta */}
-                        <p className="font-semibold text-sm text-gray-900 line-clamp-1" title={tx.items && tx.items.length > 0 ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ") : "Venta sin ítems"}>
-                          {tx.items && tx.items.length > 0
-                            ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ")
-                            : "Venta sin ítems detallados"}
-                        </p>
-        
-                        {/* Monto y fecha en la misma línea para ahorrar espacio */}
-                        <div className="flex items-center gap-2 mt-1">
-                          <p className="text-sm font-bold text-blue-600">
-                            $ {miGanancia.toLocaleString("es-AR")}
-                          </p>
-                          <span className="text-gray-300">•</span>
-                            <p className="text-xs text-gray-400">
-                              {new Date(tx.created_at).toLocaleDateString("es-AR")}
-                            </p>             
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center gap-4 ml-auto pl-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        tx.status === "PAID" ? "bg-green-100 text-green-700" :
-                        tx.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
-                        "bg-red-100 text-red-700"
-                        }`}>
-                        {tx.status}
-                      </span>
-                      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                      </div>
-                    
-                    </Link>
-                  </li>
-                  );
-                  })}
-                </ul>
-              )}
-            
-          </Accordion>
+            }
+          />
 
           {/* COLUMNA COMPRAS */}
-          <Accordion 
-            title="Mis Compras (Pagos)" 
-            defaultOpen={true}
+          <ListaTransacciones 
+            title="Mis Compras (Pagos)"
+            tipo="COMPRA"
+            transacciones={misCompras}
+            emptyMessage="Aún no realizaste ninguna compra."
             icon={
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
               </svg>
-            }>
-            
-              {misCompras.length === 0 ? (
-                <p className="text-gray-400 text-center py-8">Aún no realizaste ninguna compra.</p>
-              ) : (
-                <ul className="space-y-4">
-                  {misCompras.map((tx) => (
-                    <li key={tx.id} className="flex justify-between items-center p-4 hover:bg-gray-50 rounded-xl border border-gray-100 transition-colors">
-                      <Link href={`/dashboard/transacciones/${tx.id}`} className="flex justify-between items-center p-4 w-full">
-                      <div className="flex flex-col">
-                        {/* Título dinámico de la compra */}
-                        <p className="font-semibold text-sm text-gray-900 line-clamp-1" title={tx.items && tx.items.length > 0 ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ") : "Compra sin ítems"}>
-                          {tx.items && tx.items.length > 0
-                            ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ")
-                            : "Compra sin ítems detallados"}
-                        </p>
-        
-                        {/* Monto y fecha en la misma línea para ahorrar espacio */}
-                        <div className="flex items-center gap-2 mt-1">
-                          <p className="text-sm font-bold text-blue-600">
-                            $ {Number(tx.amount).toLocaleString("es-AR")}
-                          </p>
-                          <span className="text-gray-300">•</span>
-                          <p className="text-xs text-gray-400">
-                            {new Date(tx.created_at).toLocaleDateString("es-AR")}
-                          </p>
-                        </div>
-                     </div>
-                      
-                      <div className="flex items-center gap-4 ml-auto pl-4">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                        tx.status === "PAID" ? "bg-green-100 text-green-700" :
-                        tx.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
-                        "bg-red-100 text-red-700"
-                        }`}>
-                        {tx.status}
-                      </span>
-                      <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                      </div>
-                      
-                      </Link>
-                    </li>
-                  ))}
-              </ul>
-              )}
-            
-          </Accordion>            
+            }
+          />
         
         </div>
         <Pagination currentPage={page} hasMore={hasMoreItems} />
