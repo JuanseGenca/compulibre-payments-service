@@ -2,6 +2,8 @@
 
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
+import { revalidatePath } from "next/cache";
 
 export async function createSupportTicket(formData: FormData) {
   try {
@@ -36,5 +38,36 @@ export async function createSupportTicket(formData: FormData) {
   } catch (error) {
     console.error("Error al crear el ticket de soporte:", error);
     return { error: "Ocurrió un error interno al enviar el reporte." };
+  }
+}
+
+export async function closeSupportTicket(ticketId: string) {
+  // 1. Verificación estricta de seguridad (Solo Admins)
+  const user = await currentUser();
+  if (user?.publicMetadata?.role !== "admin") {
+    return { error: "Acceso denegado. Solo administradores pueden cerrar tickets." };
+  }
+
+  try {
+    // 2. Actualizamos el estado a CLOSED
+    const resultado = await prisma.supportTicket.updateMany({
+      where: { 
+        id: ticketId,
+        status: "OPEN" // Solo cerramos si estaba abierto
+      },
+      data: { status: "CLOSED" },
+    });
+
+    if (resultado.count === 0) {
+      return { error: "El ticket ya estaba cerrado o no existe." };
+    }
+
+    // 3. Refrescamos la vista del admin
+    revalidatePath("/admin"); // Cambiá esto si tu ruta de admin se llama distinto
+    return { success: true };
+
+  } catch (error) {
+    console.error("Error al cerrar ticket:", error);
+    return { error: "Error interno al actualizar el ticket." };
   }
 }
