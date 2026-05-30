@@ -48,7 +48,7 @@ export default async function AdminPage() {
           </section>
 
           {/* TARJETAS DE ACCESO DIRECTO */}
-          <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
           
           <Link href="/admin/retiros" className="group bg-white p-6 rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -82,6 +82,24 @@ export default async function AdminPage() {
               
             </div>
             <svg className="w-6 h-6 text-gray-300 group-hover:text-purple-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          </Link>
+
+           {/* NUEVO BOTÓN: Tickets de Soporte */}
+          <Link href="/admin/tickets" className="group bg-white p-6 rounded-3xl border border-gray-200 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 shrink-0 bg-red-100 text-red-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                </svg>
+              </div>
+
+              <div>
+                <h2 className="text-xl font-bold text-gray-900">Tickets de Soporte</h2>
+                <p className="text-sm text-gray-500 mt-1">Gestionar reclamos y mediaciones activas.</p>
+              </div>
+              
+            </div>
+            <svg className="w-6 h-6 text-gray-300 group-hover:text-red-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
           </Link>
 
         </section>

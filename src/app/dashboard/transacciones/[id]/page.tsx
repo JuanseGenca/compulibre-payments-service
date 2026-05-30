@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/components/navbar";
@@ -12,6 +12,9 @@ export default async function TransactionDetailPage({
 }) {
   const { userId } = await auth();
   if (!userId) redirect("/");
+
+  const user = await currentUser();
+  const isAdmin = user?.publicMetadata?.role === "admin";
 
   const { id } = await params;
 
@@ -29,20 +32,20 @@ export default async function TransactionDetailPage({
   const esComprador = tx.buyerId === userId;
 
   // 3. Filtramos los ítems: el comprador ve todo, el vendedor ve solo lo suyo
-  const misItems = esComprador 
+  const misItems = esComprador || isAdmin
     ? tx.items 
     : tx.items.filter(item => item.sellerId === userId);
 
   const esVendedor = misItems.length > 0 && !esComprador;
 
   // Si no es el comprador y tampoco tiene ítems acá, no tiene permiso para ver esto
-  if (!esComprador && !esVendedor) {
+  if (!esComprador && !esVendedor && !isAdmin) {
     return notFound();
   }
 
   // 4. Calculamos el monto a mostrar en el recibo principal
   // El comprador ve el total general de la operación. El vendedor ve solo su ganancia.
-  const totalMostrar = esComprador 
+  const totalMostrar = esComprador || isAdmin
     ? tx.amount 
     : misItems.reduce((total, item) => total + (item.unit_price * item.quantity), 0);
 
@@ -142,6 +145,19 @@ export default async function TransactionDetailPage({
             <p className="text-gray-400 text-xs print:text-gray-500">CompuLibre Payments - Comprobante oficial de operación</p>
           </div>
         </div>
+
+        {!isAdmin && (
+        <div className="mt-8 pt-6 border-t border-gray-200">
+          <p className="text-sm text-gray-500 mb-3">¿Tuviste algún problema con esta compra?</p>
+            <Link 
+              href={`/dashboard/transacciones/${tx.id}/reportar`}
+              className="inline-flex items-center justify-center bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 hover:text-red-600 font-medium py-2 px-4 rounded-lg transition-colors"
+            >
+              Reportar un problema
+            </Link>
+        </div>
+        )}
+        
       </main>
     </div>
   );

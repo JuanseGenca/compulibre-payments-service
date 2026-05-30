@@ -50,3 +50,17 @@ model Payout {
   
   account         Account  @relation(fields: [account_id], references: [clerk_user_id])
 }
+
+model SupportTicket {
+  id              String   @id @default(cuid())
+  
+  buyerId         String   
+  transactionId   String   
+  
+  subject         String
+  message         String   @db.Text
+  
+  status          String   @default("OPEN") // Opciones: OPEN, REVIEWING, CLOSED
+  
+  createdAt       DateTime @default(now())
+}
