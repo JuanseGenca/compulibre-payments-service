@@ -31,18 +31,8 @@ export default async function DashboardPage({
   const pageSize = 10;
   const skip = (page - 1) * pageSize;
 
-  // 2. Construimos el filtro dinámico para Prisma
-  const whereFilters : any = {
-    ...(query && {
-      items: {
-        some: {
-          name: {
-            contains: query,
-            mode: "insensitive", // Ignora mayúsculas y minúsculas
-          },
-        },
-      },
-    }),
+  /// 2. Construimos filtros base que comparten Ventas y Compras (Estado y Fechas)
+  const baseFilters: any = {
     ...(status && status !== "ALL" && { status: status }),
     created_at: (from && to) ? {
       gte: new Date(from),
@@ -50,16 +40,43 @@ export default async function DashboardPage({
     } : undefined,
   };
 
-  // 3. Ejecutamos las consultas con filtros y paginación e items
-  const [account, misVentas, misCompras] = await Promise.all([
+  // Filtro específico para mis Ventas: El ítem debe ser MÍO y coincidir con la búsqueda a la vez.
+  const ventasWhere = {
+    ...baseFilters,
+    items: {
+      some: {
+        sellerId: userId,
+        ...(query && {
+          name: {
+            contains: query,
+            mode: "insensitive",
+          },
+        }),
+      },
+    },
+  };
+
+  // Filtro específico para mis Compras: Soy el comprador y ALGÚN ítem coincide con la búsqueda.
+  const comprasWhere = {
+    ...baseFilters,
+    buyerId: userId,
+    ...(query && {
+      items: {
+        some: {
+          name: {
+            contains: query,
+            mode: "insensitive",
+          },
+        },
+      },
+    }),
+  };
+
+  // 3. Ejecutamos las consultas (ahora agregamos count para saber el total real)
+  const [account, misVentas, totalVentas, misCompras, totalCompras] = await Promise.all([
     prisma.account.findUnique({ where: { clerk_user_id: userId } }),
     prisma.transaction.findMany({
-      where: { 
-        items: {
-          some: { sellerId: userId }
-        },
-        ...whereFilters 
-      },
+      where: ventasWhere,
       include: { 
         items: {
           where: { sellerId: userId }
@@ -69,16 +86,23 @@ export default async function DashboardPage({
       take: pageSize,
       skip: skip,
     }),
+    prisma.transaction.count({ where: ventasWhere }), // Contamos el total de ventas filtradas
+    
     prisma.transaction.findMany({
-      where: { buyerId: userId, ...whereFilters },
+      where: comprasWhere,
       include: { items: true },
       orderBy: { created_at: "desc" },
       take: pageSize,
       skip: skip,
     }),
+    prisma.transaction.count({ where: comprasWhere }), // Contamos el total de compras filtradas
   ]);
 
+
   const saldoDisponible = account?.balance || 0;
+
+    // Calculamos si hay más páginas basado en el total real de la base de datos
+  const hasMoreItems = (skip + pageSize) < Math.max(totalVentas, totalCompras);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -167,7 +191,8 @@ export default async function DashboardPage({
                             </p>             
                         </div>
                       </div>
-                    
+                      
+                      <div className="flex items-center gap-4 ml-auto pl-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                         tx.status === "PAID" ? "bg-green-100 text-green-700" :
                         tx.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
@@ -178,7 +203,8 @@ export default async function DashboardPage({
                       <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-
+                      </div>
+                    
                     </Link>
                   </li>
                   );
@@ -224,7 +250,8 @@ export default async function DashboardPage({
                           </p>
                         </div>
                      </div>
-
+                      
+                      <div className="flex items-center gap-4 ml-auto pl-4">
                       <span className={`px-3 py-1 rounded-full text-xs font-medium ${
                         tx.status === "PAID" ? "bg-green-100 text-green-700" :
                         tx.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
@@ -235,7 +262,8 @@ export default async function DashboardPage({
                       <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                       </svg>
-
+                      </div>
+                      
                       </Link>
                     </li>
                   ))}
@@ -245,7 +273,7 @@ export default async function DashboardPage({
           </Accordion>            
         
         </div>
-        <Pagination currentPage={page} hasMore={misVentas.length === pageSize || misCompras.length === pageSize} />
+        <Pagination currentPage={page} hasMore={hasMoreItems} />
       </main>
     </div>
   );
