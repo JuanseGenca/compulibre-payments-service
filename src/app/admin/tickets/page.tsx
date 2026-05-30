@@ -1,8 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/navbar";
 import TicketActionButton from "@/components/TicketActionButton";
 
 export default async function AdminTicketsPage() {

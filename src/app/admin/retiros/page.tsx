@@ -1,8 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/navbar";
 import RejectPayoutButton from "@/components/RechazarPayout";
 import ApprovePayoutButton from "@/components/AprobarPayout";
 

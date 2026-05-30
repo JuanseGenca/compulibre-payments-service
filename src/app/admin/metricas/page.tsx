@@ -19,7 +19,7 @@ export default async function AdminMetricasPage() {
   const ticketPromedio = txCobradas.length > 0 ? volumenTotal / txCobradas.length : 0;
 
   return (
-      <main className="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full space-y-6">
+      <main className="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6">
         
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-2">

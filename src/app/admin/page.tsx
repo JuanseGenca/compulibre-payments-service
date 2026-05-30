@@ -1,4 +1,3 @@
-import Navbar from "@/components/navbar";
 import { prisma } from "@/lib/prisma";
 import Link from "next/dist/client/link";
 
