@@ -108,7 +108,7 @@ export default async function DashboardPage({
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
 
-      <main className="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8">
+      <main className="flex-grow p-4 md:p-8 max-w-screen-2xl mx-auto w-full space-y-8">
         <header>
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Mi Panel</h1>
           <p className="text-gray-500 mt-1">Gestioná tus movimientos y saldo.</p>
@@ -181,7 +181,7 @@ export default async function DashboardPage({
                     <Link href={`/dashboard/transacciones/${tx.id}`} className="flex justify-between items-center p-4 w-full">
                       <div className="flex flex-col">
                         {/* Título dinámico de la venta */}
-                        <p className="font-semibold text-gray-900 line-clamp-1" title={tx.items && tx.items.length > 0 ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ") : "Venta sin ítems"}>
+                        <p className="font-semibold text-sm text-gray-900 line-clamp-1" title={tx.items && tx.items.length > 0 ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ") : "Venta sin ítems"}>
                           {tx.items && tx.items.length > 0
                             ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ")
                             : "Venta sin ítems detallados"}
@@ -240,7 +240,7 @@ export default async function DashboardPage({
                       <Link href={`/dashboard/transacciones/${tx.id}`} className="flex justify-between items-center p-4 w-full">
                       <div className="flex flex-col">
                         {/* Título dinámico de la compra */}
-                        <p className="font-semibold text-gray-900 line-clamp-1" title={tx.items && tx.items.length > 0 ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ") : "Compra sin ítems"}>
+                        <p className="font-semibold text-sm text-gray-900 line-clamp-1" title={tx.items && tx.items.length > 0 ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ") : "Compra sin ítems"}>
                           {tx.items && tx.items.length > 0
                             ? tx.items.map((i: TransactionItem) => `${i.quantity}x ${i.name}`).join(" + ")
                             : "Compra sin ítems detallados"}
