@@ -9,7 +9,7 @@ datasource db {
 }
 
 model Account {
-  clerk_user_id     String     @unique
+  clerk_user_id     String     @id @unique
   balance           Float      @default(0.0)
   payouts           Payout[]
 }
