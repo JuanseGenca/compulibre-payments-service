@@ -1,8 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/navbar";
 import RejectPayoutButton from "@/components/RechazarPayout";
 import ApprovePayoutButton from "@/components/AprobarPayout";
 
@@ -23,8 +20,6 @@ export default async function AdminRetirosPage() {
     ]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
       <main className="p-8">
         <div className="max-w-7xl mx-auto">
           
@@ -116,7 +111,5 @@ export default async function AdminRetirosPage() {
 
         </div>
       </main>
-    </div>
-    
   );
 }

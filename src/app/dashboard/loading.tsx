@@ -1,9 +1,6 @@
 export default function DashboardLoading() {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Esqueleto del Navbar (Opcional, pero mantiene la estructura si el Navbar no carga al instante) */}
-      <div className="h-16 bg-white border-b border-gray-200 animate-pulse"></div>
-
       <main className="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full space-y-8">
         
         {/* Esqueleto del Header (Título "Mi Panel") */}

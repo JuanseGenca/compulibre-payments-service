@@ -8,6 +8,24 @@ datasource db {
   provider = "postgresql"
 }
 
+enum TransactionStatus {
+  PENDING
+  PAID
+  REJECTED
+}
+
+enum PayoutStatus {
+  PROCESSING
+  COMPLETED
+  REJECTED
+}
+
+enum TicketStatus {
+  OPEN
+  REVIEWING
+  CLOSED
+}
+
 model Account {
   clerk_user_id     String     @id @unique
   balance           Float      @default(0.0)
@@ -15,18 +33,17 @@ model Account {
 }
 
 model Transaction {
-  id                       String   @id @default(uuid())
+  id                       String            @id @default(uuid())
   external_order_reference String
   amount                   Float
-  currency                 String   @default("ARS")
-  status                   String   @default("PENDING") // PENDING, APPROVED, REJECTED
-  created_at               DateTime @default(now())
+  currency                 String            @default("ARS")
+  status                   TransactionStatus @default(PENDING)
+  created_at               DateTime          @default(now())
   buyerId                  String
   payment_method           String?
   items                    TransactionItem[]
   buyerAddress             String
   buyerCodigoPostal        Int
-
 }
 
 model TransactionItem {
@@ -42,25 +59,25 @@ model TransactionItem {
 }
 
 model Payout {
-  id              String   @id @default(uuid())
+  id              String       @id @default(uuid())
   account_id      String
   amount          Float
   destination_cbu String
-  status          String   @default("PROCESSING") // PROCESSING, COMPLETED
+  status          PayoutStatus @default(PROCESSING)
   
   account         Account  @relation(fields: [account_id], references: [clerk_user_id])
 }
 
 model SupportTicket {
-  id              String   @id @default(cuid())
+  id              String       @id @default(cuid())
   
   buyerId         String   
   transactionId   String   
   
   subject         String
-  message         String   @db.Text
+  message         String       @db.Text
   
-  status          String   @default("OPEN") // Opciones: OPEN, REVIEWING, CLOSED
+  status          TicketStatus @default(OPEN)
   
-  createdAt       DateTime @default(now())
+  createdAt       DateTime     @default(now())
 }

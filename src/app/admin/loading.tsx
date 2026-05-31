@@ -1,9 +1,5 @@
 export default function Loading() {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Esqueleto del Navbar */}
-      <div className="h-16 bg-white border-b border-gray-200 animate-pulse"></div>
-      
       <main className="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full space-y-8">
         
         {/* Esqueleto del Header (Título y subtítulo) */}
@@ -13,8 +9,8 @@ export default function Loading() {
         </div>
 
         {/* Esqueleto de las Tarjetas (KPIs) */}
-        <section className="grid grid-cols-1 md:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map((i) => (
+        <section className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
             <div key={i} className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm">
               <div className="h-3 bg-gray-200 rounded-full w-1/2 mb-4 animate-pulse"></div>
               <div className="h-8 bg-gray-200 rounded-md w-3/4 animate-pulse"></div>
@@ -35,6 +31,5 @@ export default function Loading() {
         </section>
 
       </main>
-    </div>
   );
 }

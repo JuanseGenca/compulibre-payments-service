@@ -1,17 +1,8 @@
 import { prisma } from "@/lib/prisma";
-import { currentUser } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/navbar";
 import TicketActionButton from "@/components/TicketActionButton";
 
 export default async function AdminTicketsPage() {
-  // 1. Validamos que sea el admin
-  const user = await currentUser();
-  if (user?.publicMetadata?.role !== "admin") {
-    redirect("/");
-  }
-
   // 2. Buscamos tickets abiertos y cerrados al mismo tiempo
   const [ticketsAbiertos, ticketsCerrados] = await Promise.all([
     prisma.supportTicket.findMany({
@@ -26,8 +17,6 @@ export default async function AdminTicketsPage() {
   ]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar />
       <main className="p-8">
         <div className="max-w-7xl mx-auto">
           
@@ -132,6 +121,5 @@ export default async function AdminTicketsPage() {
 
         </div>
       </main>
-    </div>
   );
 }

@@ -16,27 +16,18 @@ export default async function MisTicketsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Navbar />
-      
-      <main className="flex-grow p-4 md:p-8 max-w-4xl mx-auto w-full space-y-6">
+      <main className="flex-grow p-4 md:p-8 max-w-6xl mx-auto w-full space-y-6">
         
-        {/* Breadcrumb e Historial */}
-        <div className="flex items-center gap-2 text-sm text-gray-500">
-          <Link href="/dashboard" className="hover:text-blue-600 transition-colors">Mi Panel</Link>
-          <span>/</span>
-          <span className="text-gray-900 font-medium">Mis Reclamos</span>
-        </div>
-
+        {/*Historial */}
         <header className="mb-6 flex justify-between items-end border-b pb-4">
           <div>
-            <h1 className="text-3xl font-black text-gray-900">Historial de Reclamos</h1>
+            <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Historial de Reclamos</h1>
             <p className="text-gray-500 mt-1">Seguí el estado de tus reportes enviados a soporte.</p>
           </div>
           
           <Link 
             href="/dashboard"
-            className="text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors hidden sm:block"
+            className="text-base font-medium text-blue-600 hover:text-blue-800 transition-colors"
           >
             &larr; Volver al Panel
           </Link>
@@ -101,6 +92,5 @@ export default async function MisTicketsPage() {
         )}
 
       </main>
-    </div>
   );
 }
