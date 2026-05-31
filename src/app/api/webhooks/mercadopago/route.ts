@@ -16,7 +16,7 @@ export async function POST(request: Request) {
       
       const paymentInfo = await new Payment(mpClient).get({ id: paymentId });
 
-      let finalStatus = 'PENDING';
+      let finalStatus: "PENDING" | "PAID" | "REJECTED" = 'PENDING';
 
       // Vemos que devuelve mercado pago
       if (paymentInfo.status === 'approved' ) {
