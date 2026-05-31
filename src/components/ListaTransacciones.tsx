@@ -1,12 +1,17 @@
 import Link from "next/link";
 import Accordion from "@/components/accordion";
-import { TransactionItem } from "@prisma/client";
+import { TransactionItem, Prisma } from "@prisma/client";
+
+// Tipado estricto inferido por Prisma para una transacción que incluye sus ítems
+type TransactionWithItems = Prisma.TransactionGetPayload<{
+  include: { items: true };
+}>;
 
 // Definimos qué datos necesita recibir este componente para funcionar
 interface ListaTransaccionesProps {
   title: string;
   icon: React.ReactNode;
-  transacciones: any[]; // Podés tiparlo mejor si tenés el tipo exportado de Prisma
+  transacciones: TransactionWithItems[];
   tipo: "VENTA" | "COMPRA";
   emptyMessage: string;
 }
