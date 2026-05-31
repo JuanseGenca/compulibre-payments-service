@@ -3,7 +3,6 @@ import { MercadoPagoConfig, Payment } from 'mercadopago';
 import { prisma } from "@/lib/prisma";
 import { mpClient } from '@/lib/mercadopago';
 import { notifyBuyerApp, confirmOrderSellerApp } from '@/services/externalApps';
-import crypto from 'crypto';
 
 export async function POST(request: Request) {
   try {
@@ -11,41 +10,6 @@ export async function POST(request: Request) {
     const url = new URL(request.url);
     const type = url.searchParams.get('type') || url.searchParams.get('topic');
     const paymentId = url.searchParams.get('data.id') || url.searchParams.get('id');
-
-    // 1. Verificación de Seguridad de la Firma (x-signature)
-    const xSignature = request.headers.get('x-signature');
-    const xRequestId = request.headers.get('x-request-id');
-    const webhookSecret = process.env.MP_WEBHOOK_SECRET;
-
-    if (webhookSecret && xSignature && xRequestId && paymentId) {
-      const parts = xSignature.split(',');
-      let ts = '';
-      let hash = '';
-
-      parts.forEach(part => {
-        const [key, value] = part.split('=');
-        if (key && value) {
-          const trimmedKey = key.trim();
-          const trimmedValue = value.trim();
-          if (trimmedKey === 'ts') ts = trimmedValue;
-          else if (trimmedKey === 'v1') hash = trimmedValue;
-        }
-      });
-
-      const manifest = `id:${paymentId};request-id:${xRequestId};ts:${ts};`;
-      
-      const hmac = crypto.createHmac('sha256', webhookSecret);
-      hmac.update(manifest);
-      const sha = hmac.digest('hex');
-
-      if (sha !== hash) {
-        console.error("Firma HMAC inválida. Petición rechazada.");
-        return NextResponse.json({ error: "Firma inválida" }, { status: 403 });
-      }
-    } else if (webhookSecret) {
-        console.error("Faltan cabeceras de seguridad de Mercado Pago.");
-        return NextResponse.json({ error: "Cabeceras de seguridad faltantes" }, { status: 400 });
-    }
 
     // Nos aseguramos de que el aviso sea sobre un pago y traiga un ID
     if (type === 'payment' && paymentId) {
