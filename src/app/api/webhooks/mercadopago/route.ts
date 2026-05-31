@@ -83,6 +83,13 @@ export async function POST(request: Request) {
             status: finalStatus,
            paymentMethod: txRecord.payment_method
          });
+
+         if (buyerResponse.status === 200) {
+              console.log("Buyer App actualizada. Estado:", buyerResponse.data.orderStatus);
+            } else {
+                  // Manejamos los errores documentados (400, 404, 500)
+                  console.error(`Error en Buyer App (${buyerResponse.status}):`, buyerResponse.data.error);
+                }
           
          if(finalStatus === 'PAID'){
            // 2. Llamada a Seller App
@@ -94,7 +101,15 @@ export async function POST(request: Request) {
               buyerAddress: txRecord.buyerAddress,
               buyerCodigoPostal: txRecord.buyerCodigoPostal
            });
+
+           if (confirmResponse.status === 200) {
+            console.log("Seller App actualizada. Estado:", confirmResponse.data.status);
+          } else {
+                // Manejamos los errores documentados (400, 404, 500)
+                console.error(`Error en Seller App (${confirmResponse.status}):`, confirmResponse.data.error);
+              }
           }
+
          console.log("Orquestación finalizada");
 
         } catch (error) {
@@ -107,6 +122,7 @@ export async function POST(request: Request) {
 
   } catch (error) {
     console.error('Error procesando el webhook de Mercado Pago:', error);
+    //para que mp intente mas tarde
     return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 
