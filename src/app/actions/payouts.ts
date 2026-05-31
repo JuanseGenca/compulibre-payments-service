@@ -13,7 +13,10 @@ export async function createPayout(formData: FormData) {
   const cbu = formData.get("cbu") as string;
 
   if (isNaN(amount) || amount <= 0) return { error: "Monto invalido" };
-  if (!cbu || cbu.length < 22) return { error: "CBU inválido" };
+  
+  // Validamos que el CBU sea exactamente de 22 dígitos numéricos
+  const cbuRegex = /^\d{22}$/;
+  if (!cbu || !cbuRegex.test(cbu)) return { error: "El CBU/CVU debe tener exactamente 22 números" };
 
   // Usamos una transacción de Prisma para que todo ocurra o nada ocurra
   try {
