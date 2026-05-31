@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Accordion from "@/components/accordion";
 import { TransactionItem, Prisma } from "@prisma/client";
+import { TransactionStatusBadge } from "./TransactionStatusBadge";
 
 // Tipado estricto inferido por Prisma para una transacción que incluye sus ítems
 type TransactionWithItems = Prisma.TransactionGetPayload<{
@@ -52,7 +53,10 @@ export default function ListaTransacciones({
                     </p>
                     <div className="flex items-center gap-2 mt-1">
                       <p className="text-sm font-bold text-blue-600">
-                        $ {montoMostrar.toLocaleString("es-AR")}
+                        {new Intl.NumberFormat("es-AR", {
+                          style: "currency",
+                          currency: "ARS",
+                        }).format(montoMostrar)}
                       </p>
                       <span className="text-gray-300">•</span>
                       <p className="text-xs text-gray-400">
@@ -62,13 +66,7 @@ export default function ListaTransacciones({
                   </div>
                   
                   <div className="flex items-center gap-4 ml-auto pl-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      tx.status === "PAID" ? "bg-green-100 text-green-700" :
-                      tx.status === "PENDING" ? "bg-yellow-100 text-yellow-700" :
-                      "bg-red-100 text-red-700"
-                    }`}>
-                      {tx.status}
-                    </span>
+                    <TransactionStatusBadge status={tx.status} />
                     <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
