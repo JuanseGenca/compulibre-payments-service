@@ -146,6 +146,7 @@ export default async function DashboardPage({
           </section>
         )}
 
+        
         {/* GRÁFICO DE COMPRAS (Solo lo mostramos si estamos en compras) */}
         {activeTab === "compras" && (
           <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
@@ -154,7 +155,7 @@ export default async function DashboardPage({
             <UserSalesChart ventas={misTransacciones} />
           </section>
         )}
-
+        
         <section>
           <TransactionFilters />
         </section>
@@ -164,6 +165,7 @@ export default async function DashboardPage({
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
             <Link
               href={buildTabUrl("ventas")}
+              scroll={false}
               className={`
                 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
                 ${activeTab === "ventas"
@@ -175,6 +177,7 @@ export default async function DashboardPage({
             </Link>
             <Link
               href={buildTabUrl("compras")}
+              scroll={false}
               className={`
                 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm
                 ${activeTab === "compras"

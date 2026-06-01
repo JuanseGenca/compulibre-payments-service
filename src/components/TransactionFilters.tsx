@@ -21,7 +21,7 @@ export default function TransactionFilters() {
     params.set("page", "1"); // Al filtrar, volvemos a la página 1
 
     startTransition(() => {
-      router.push(`?${params.toString()}`);
+      router.push(`?${params.toString()}`, { scroll: false });
     });
   }, [searchParams, router]);
 
@@ -42,7 +42,13 @@ export default function TransactionFilters() {
 
   const limpiarFiltros = () => {
     setBusqueda("");
-    router.replace(pathname);
+    const currentTab = searchParams.get("tab");
+    const params = new URLSearchParams();
+    if (currentTab) {
+      params.set("tab", currentTab);
+    }
+    
+    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
   };
 
   // Verificamos si hay algún filtro activo para mostrar u ocultar el botón
