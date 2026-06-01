@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import {
   AreaChart,
   Area,
@@ -11,29 +10,13 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-export default function AdminVolumeChart({ transacciones }: { transacciones: any[] }) {
-  const chartData = useMemo(() => {
-    // Filtramos solo las exitosas
-    const exitosas = transacciones.filter((t) => t.status === "PAID");
+type ChartDataPoint = {
+  fecha: string;
+  total: number;
+  comision: number;
+};
 
-    // Agrupamos por fecha
-    const agrupado = exitosas.reduce((acc: any, curr) => {
-      const fecha = new Date(curr.created_at).toLocaleDateString("es-AR", {
-        day: "2-digit",
-        month: "short",
-      });
-
-      if (!acc[fecha]) acc[fecha] = 0;
-      acc[fecha] += Number(curr.amount);
-      return acc;
-    }, {});
-
-    return Object.keys(agrupado).map((fecha) => ({
-      fecha,
-      total: agrupado[fecha],
-      comision: agrupado[fecha] * 0.05, // Calculamos la ganancia de la plataforma (5%)
-    })).reverse();
-  }, [transacciones]);
+export default function AdminVolumeChart({ chartData }: { chartData: ChartDataPoint[] }) {
 
   if (chartData.length === 0) {
     return (

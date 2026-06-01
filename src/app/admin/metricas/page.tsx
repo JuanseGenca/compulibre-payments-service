@@ -1,22 +1,50 @@
 import { prisma } from "@/lib/prisma";
-import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/navbar";
 import AdminVolumeChart from "@/components/AdminVolumeChart";
+
+export const dynamic = 'force-dynamic';
 
 export default async function AdminMetricasPage() {
 
-  // Traemos TODAS las transacciones para analizarlas
-  const transacciones = await prisma.transaction.findMany({
+  // 1. Obtenemos agregaciones desde la BD en lugar de traer todos los registros
+  const [aggregations, totalTxCount] = await Promise.all([
+    prisma.transaction.aggregate({
+      where: { status: 'PAID' },
+      _sum: { amount: true },
+      _count: { id: true }
+    }),
+    prisma.transaction.count()
+  ]);
+
+  const volumenTotal = Number(aggregations._sum.amount || 0);
+  const txCobradasCount = aggregations._count.id;
+  const gananciaPlataforma = volumenTotal * 0.05; // 5% de comisión (idealmente de env/BD)
+  const ticketPromedio = txCobradasCount > 0 ? volumenTotal / txCobradasCount : 0;
+
+  // 2. Para el gráfico, traemos solo las transacciones PAID con los campos mínimos necesarios
+  const transaccionesPAID = await prisma.transaction.findMany({
+    where: { status: 'PAID' },
+    select: { amount: true, created_at: true },
     orderBy: { created_at: 'desc' }
   });
 
-  // Cálculos rápidos para las tarjetas (KPIs)
-  const txCobradas = transacciones.filter(t => t.status === 'PAID');
-  const volumenTotal = txCobradas.reduce((acc, curr) => acc + Number(curr.amount), 0);
-  const gananciaPlataforma = volumenTotal * 0.05; // 5% de comisión imaginaria
-  const ticketPromedio = txCobradas.length > 0 ? volumenTotal / txCobradas.length : 0;
+  // Agrupamos por fecha en el servidor
+  const agrupado = transaccionesPAID.reduce((acc: Record<string, number>, curr) => {
+    const fecha = curr.created_at.toLocaleDateString("es-AR", {
+      day: "2-digit",
+      month: "short",
+    });
+
+    if (!acc[fecha]) acc[fecha] = 0;
+    acc[fecha] += Number(curr.amount);
+    return acc;
+  }, {});
+
+  const chartData = Object.keys(agrupado).map((fecha) => ({
+    fecha,
+    total: agrupado[fecha],
+    comision: agrupado[fecha] * 0.05,
+  })).reverse();
 
   return (
       <main className="flex-grow p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6">
@@ -58,8 +86,8 @@ export default async function AdminMetricasPage() {
 
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
             <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Operaciones Exitosas</h3>
-            <p className="text-3xl font-black text-gray-900">{txCobradas.length}</p>
-            <p className="text-xs text-gray-500 mt-1">De {transacciones.length} intentos totales</p>
+            <p className="text-3xl font-black text-gray-900">{txCobradasCount}</p>
+            <p className="text-xs text-gray-500 mt-1">De {totalTxCount} intentos totales</p>
           </div>
 
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
@@ -82,7 +110,7 @@ export default async function AdminMetricasPage() {
             </span>
           </div>
           
-          <AdminVolumeChart transacciones={transacciones} />
+          <AdminVolumeChart chartData={chartData} />
         </section>
 
       </main>
