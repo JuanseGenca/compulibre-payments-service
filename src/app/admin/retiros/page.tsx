@@ -17,12 +17,10 @@ export default async function AdminRetirosPage(props: {
   const [retirosPendientes, retirosCompletados, totalCompletados] = await Promise.all([
         prisma.payout.findMany({
             where: { status: "PROCESSING" },
-            include: { account: true },
             orderBy: { id: "asc" },
         }),
         prisma.payout.findMany({
             where: { status: "COMPLETED" },
-            include: { account: true },
             orderBy: { id: "desc" },
             take,
             skip,
