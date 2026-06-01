@@ -60,7 +60,7 @@ export default async function MisTicketsPage() {
 
         <h3 className="font-bold text-gray-900 text-lg">{ticket.subject}</h3>
         <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-xl italic border border-gray-100">
-          <p> {`"${ticket.message}"`} </p>
+          &quot;{ticket.message}&quot;
         </p>
       </div>
 
