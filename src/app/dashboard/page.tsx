@@ -73,16 +73,13 @@ export default async function DashboardPage({
     }),
   };
 
-  // 3. Consultamos el Saldo siempre
-  const account = await prisma.account.findUnique({ where: { clerk_user_id: userId } });
-  const saldoDisponible = account?.balance || 0;
-
   // 4. Optimizamos consultas: Solo pedimos a la DB lo de la pestaña activa
   let misTransacciones = [];
   let totalItems = 0;
+  let account;
 
   if (activeTab === "ventas") {
-    const [ventas, total] = await Promise.all([
+    const [ventas, total, acc] = await Promise.all([
       prisma.transaction.findMany({
         where: ventasWhere,
         include: { 
@@ -93,11 +90,13 @@ export default async function DashboardPage({
         skip: skip,
       }),
       prisma.transaction.count({ where: ventasWhere }),
+      prisma.account.findUnique({ where: { clerk_user_id: userId } }),
     ]);
     misTransacciones = ventas;
     totalItems = total;
+    account = acc;
   } else {
-    const [compras, total] = await Promise.all([
+    const [compras, total, acc] = await Promise.all([
       prisma.transaction.findMany({
         where: comprasWhere,
         include: { items: true },
@@ -106,11 +105,14 @@ export default async function DashboardPage({
         skip: skip,
       }),
       prisma.transaction.count({ where: comprasWhere }),
+      prisma.account.findUnique({ where: { clerk_user_id: userId } }),
     ]);
     misTransacciones = compras;
     totalItems = total;
+    account = acc;
   }
 
+  const saldoDisponible = account?.balance || 0;
   // Calculamos si hay más páginas basado en el total real de la pestaña activa
   const hasMoreItems = (skip + pageSize) < totalItems;
 
@@ -132,7 +134,7 @@ export default async function DashboardPage({
           <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Mi Panel</h1>
           <p className="text-gray-500 mt-1">Gestioná tus movimientos y saldo.</p>
         </header>
-
+        
         <TarjetaSaldo saldoDisponible={saldoDisponible} />
 
         {/* GRÁFICO DE VENTAS (Solo lo mostramos si estamos en ventas) */}
