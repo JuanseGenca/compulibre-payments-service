@@ -17,18 +17,18 @@ con x-api-key: <PAYMENTS_API_KEY>.
     body:
         {
             "buyerId": "user_3EXguWfvjPYCZNcvXhPAhQS5jid",
-            "orderReference": "ORD-COMPULIBRE-909",
-            "amount": 200000,
+            "orderReference": "ORD-COMPULIBRE-Ejemplo",
+            "amount": 850000,
             "currency": "ARS",
-            "buyerAddress": "Colon 1400",
+            "buyerAddress": "Espora 140",
             "buyerCodigoPostal": 8109,
             "items": [
                 {
-                    "sellerId": "user_vendedor_gamma",
-                    "productId": "hw_teclado_HXAR",
-                    "name": "Teclado Mecanico HyperX Alloy Rise",
+                    "sellerId": "user_vendedor_rojo",
+                    "productId": "hw_auriculares_hx1",
+                    "name": "Auriculares HyperX Cloud Stinger 2 White",
                     "quantity": 1,
-                    "unit_price": 200000
+                    "unit_price": 85000
                 }
             ]
         }
@@ -59,6 +59,32 @@ Cuando el pago se complete Mercadopago va a notificar a app/api/webhooks/mercado
 
 ## Credenciales de Mercadopago
 
+Por si Mercadopago esta fallando dejo otra cuenta y otra tarjeta de prueba.
 
+Cuenta1 (la del ejemplo):
+
+    usuario/mail: TESTUSER256940898340914939
+    contraseña: PajbzOkDR5
+    codigo de verificacion: 882260
+
+Cuenta2:
+
+    usuario/mail: TESTUSER2902309356924606588
+    contraseña: BWSGezlnwC
+    codigo de verificacion:  331170
+
+Tarjeta1 Mastercard:
+
+    numero: 5031 7557 3453 0604
+    codigo: 123
+    fecha: 11/30
+    nombre: APRO/OTHE/CONT
+
+Tarjeta2 Visa:
+
+    numero: 4509 9535 6623 3704
+    codigo: 123
+    fecha: 11/30
+    nombre: APRO/OTHE/CONT
    
 ---
