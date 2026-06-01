@@ -1,23 +1,39 @@
-import Navbar from "@/components/navbar";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import PayoutForm from "@/components/PayoutForm";
+import Pagination from "@/components/Pagination";
 
-export default async function RetirosPage() {
+export default async function RetirosPage(props: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+
+  const searchParams = await props.searchParams;
+  const currentPage = Number(searchParams?.page) || 1;
+  const take = 7;
+  const skip = (currentPage - 1) * take;
+
+
   const { userId } = await auth();
 
   if (!userId) {
     redirect("/");
   }
 
-  // Buscamos solo los retiros del usuario
+  const totalPayouts = await prisma.payout.count({
+    where: { account: { clerk_user_id: userId } },
+  });
+
+  // 2. Buscamos solo los retiros de ESTA página usando skip y take
   const misPayouts = await prisma.payout.findMany({
     where: { account: { clerk_user_id: userId } },
-    // Si en tu schema tenés un createdAt en Payout, usá ese. Si no, ordenamos por ID invertido.
-    orderBy: { id: "desc" }, 
+    orderBy: { id: "desc" },
+    take: take,
+    skip: skip,
   });
+
+  const hasMorePayouts = totalPayouts > skip + take;
 
   const account = await prisma.account.findUnique({
     where: { clerk_user_id: userId },
@@ -42,10 +58,10 @@ export default async function RetirosPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-        <section className="lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col">
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden">
+        <section className="order-2 lg:order-1 lg:col-span-2 bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden flex flex-col gap-4">
+        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm overflow-hidden min-h-[480px] flex flex-col">
           {misPayouts.length === 0 ? (
-            <div className="p-12 text-center">
+            <div className="p-12 text-center flex-grow flex items-center justify-center">
               <p className="text-gray-500">Aún no solicitaste ningún retiro de dinero.</p>
             </div>
           ) : (
@@ -83,10 +99,14 @@ export default async function RetirosPage() {
             </div>
           )}
         </div>
+
+          {totalPayouts > take && (
+            <Pagination currentPage={currentPage} hasMore={hasMorePayouts} />
+          )}
         </section>
 
         <section>
-          <div className="lg:col-span-1 space-y-6">
+          <div className="order-1 lg:order-2 lg:col-span-1 space-y-6">
             <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
               <p className="text-sm font-medium text-gray-500 uppercase">Saldo Disponible</p>
               <p className="text-4xl font-bold text-blue-600 mt-2">
@@ -99,7 +119,7 @@ export default async function RetirosPage() {
             
           </div>
             </section>
-
+    
         </div>
       </main>
   );

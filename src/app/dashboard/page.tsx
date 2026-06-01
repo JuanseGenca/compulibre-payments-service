@@ -1,4 +1,3 @@
-import Navbar from "@/components/navbar";
 import Pagination from "@/components/Pagination";
 import TransactionFilters from "@/components/TransactionFilters";
 import { prisma } from "@/lib/prisma";
@@ -7,7 +6,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Prisma, TransactionStatus } from "@prisma/client";
 import UserSalesChart from "@/components/UserSalesCharts";
-import Accordion from "@/components/accordion";
 import TarjetaSaldo from "@/components/TarjetaSaldo";
 import ListaTransacciones from "@/components/ListaTransacciones";
 
@@ -142,6 +140,15 @@ export default async function DashboardPage({
           <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
             <h2 className="text-xl font-bold text-gray-900 mb-2">Rendimiento de Ventas</h2>
             <p className="text-sm text-gray-500 mb-4">Evolución de tus ingresos cobrados.</p>
+            <UserSalesChart ventas={misTransacciones} />
+          </section>
+        )}
+
+        {/* GRÁFICO DE COMPRAS (Solo lo mostramos si estamos en compras) */}
+        {activeTab === "compras" && (
+          <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Historial de compras</h2>
+            <p className="text-sm text-gray-500 mb-4">Evolución de tus gastos realizados.</p>
             <UserSalesChart ventas={misTransacciones} />
           </section>
         )}
