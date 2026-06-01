@@ -1,20 +1,36 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import TicketActionButton from "@/components/TicketActionButton";
+import Pagination from "@/components/Pagination";
 
-export default async function AdminTicketsPage() {
+export const dynamic = 'force-dynamic';
+
+export default async function AdminTicketsPage(props: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const currentPage = Number(searchParams?.page) || 1;
+  const take = 10;
+  const skip = (currentPage - 1) * take;
+
   // 2. Buscamos tickets abiertos y cerrados al mismo tiempo
-  const [ticketsAbiertos, ticketsCerrados] = await Promise.all([
+  const [ticketsAbiertos, ticketsCerrados, totalCerrados] = await Promise.all([
     prisma.supportTicket.findMany({
       where: { status: "OPEN" },
       orderBy: { createdAt: "asc" },
     }),
     prisma.supportTicket.findMany({
       where: { status: "CLOSED" },
-      orderBy: { createdAt: "desc" }, // Los cerrados más recientes primero
-      take: 10,
+      orderBy: { createdAt: "desc" },
+      take,
+      skip,
+    }),
+    prisma.supportTicket.count({
+      where: { status: "CLOSED" },
     })
   ]);
+
+  const hasMoreCerrados = totalCerrados > skip + take;
 
   return (
       <main className="p-8">
@@ -65,7 +81,7 @@ export default async function AdminTicketsPage() {
                             </span>
                         </div>
                         <p className="text-sm text-gray-600 bg-gray-50 border border-gray-100 p-3 rounded-lg italic">
-                          "{ticket.message}"
+                          &quot;{ticket.message}&quot;
                         </p>
                         <p className="text-xs text-gray-500">
                           Comprador ID: <span className="font-mono bg-white border px-2 py-1 rounded select-all">{ticket.buyerId}</span>
@@ -97,7 +113,7 @@ export default async function AdminTicketsPage() {
             <div className="p-6 border-b border-gray-100 bg-gray-50/50">
               <h2 className="font-semibold text-gray-800 flex items-center gap-2 text-gray-500">
                 <span className="w-2 h-2 rounded-full bg-gray-400"></span>
-                Reclamos Cerrados (Últimos 10)
+                Reclamos Cerrados
               </h2>
             </div>
             <div className="p-6">
@@ -109,7 +125,7 @@ export default async function AdminTicketsPage() {
                     <li key={ticket.id} className="flex justify-between items-center p-4 border border-gray-50 rounded-xl bg-gray-50/50 grayscale">
                       <div>
                         <p className="font-semibold text-gray-900">{ticket.subject}</p>
-                        <p className="text-xs text-gray-500 line-clamp-1 italic mt-1">"{ticket.message}"</p>
+                        <p className="text-xs text-gray-500 line-clamp-1 italic mt-1">&quot;{ticket.message}&quot;</p>
                       </div>
                       <span className="text-xs font-bold text-gray-500 uppercase ml-4">Resuelto</span>
                     </li>
@@ -118,6 +134,11 @@ export default async function AdminTicketsPage() {
               )}
             </div>
           </div>
+
+          {/* Paginación de Historial */}
+          {totalCerrados > take && (
+            <Pagination currentPage={currentPage} hasMore={hasMoreCerrados} />
+          )}
 
         </div>
       </main>
