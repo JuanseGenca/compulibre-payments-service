@@ -11,12 +11,14 @@ Módulo central de pagos y gestión financiera para el ecosistema del marketplac
 ## Credenciales
 
     usuario final: 
-        correo: usuariopaymenst+clerk_test@example.com
-        password: UsuarioPayments
+        correo: usuario+clerk_test@iaw.com
+        password: iawuser#
+        id:user_3EXguWfvjPYCZNcvXhPAhQS5jid
     
     administrador:
-        correo:adminpayments+clerk_test@example.com
-        password: AdminPayments
+        correo: administrador+clerk_test@iaw.com
+        password: iawuser#
+        id:user_3EKfDPzDBs9qXiSa5oXMFUcevFI
 
     Si clerk pide un codigo de confirmacion es 424242 para ambas cuentas.
 
