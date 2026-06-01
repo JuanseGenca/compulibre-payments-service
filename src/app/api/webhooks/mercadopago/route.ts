@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { MercadoPagoConfig, Payment } from 'mercadopago';
+import { Payment } from 'mercadopago';
 import { prisma } from "@/lib/prisma";
 import { mpClient } from '@/lib/mercadopago';
 import { notifyBuyerApp, confirmOrderSellerApp } from '@/services/externalApps';

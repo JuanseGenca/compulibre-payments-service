@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { MercadoPagoConfig, Preference } from 'mercadopago';
+import { Preference } from 'mercadopago';
 import { prisma } from "@/lib/prisma";
 import { mpClient } from '@/lib/mercadopago';
 

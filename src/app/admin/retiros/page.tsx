@@ -11,7 +11,7 @@ export default async function AdminRetirosPage(props: {
 }) {
   const searchParams = await props.searchParams;
   const currentPage = Number(searchParams?.page) || 1;
-  const take = 10;
+  const take = 7;
   const skip = (currentPage - 1) * take;
 
   const [retirosPendientes, retirosCompletados, totalCompletados] = await Promise.all([

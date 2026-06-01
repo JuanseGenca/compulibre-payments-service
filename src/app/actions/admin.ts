@@ -39,7 +39,7 @@ try{
   }
 }
 
-export async function rejectPayout(payoutId: string, reason: string = "Rechazado por el administrador") {
+export async function rejectPayout(payoutId: string) {
 
   const user = await currentUser();
     if (user?.publicMetadata?.role !== "admin") {
@@ -83,8 +83,11 @@ export async function rejectPayout(payoutId: string, reason: string = "Rechazado
     revalidatePath("/dashboard/retiros");
     return { success: true };
 
-  } catch (e: any) {
+  } catch (e: unknown) {
     console.error(e);
-    return { error: e.message || "Error al rechazar el retiro" };
+    if (e instanceof Error) {
+      return { error: e.message };
+    }
+    return { error: "Ocurrió un error crítico e inesperado al rechazar el retiro." };
   }
 }

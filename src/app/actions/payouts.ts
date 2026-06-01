@@ -53,7 +53,11 @@ export async function createPayout(formData: FormData) {
     revalidatePath("/dashboard/retiros");
     return { success: true };
 
-  } catch (error: any) {
-    return { error: error.message || "Error procesando el retiro" };
+  } catch (e: unknown) {
+    console.error(e);
+    if (e instanceof Error) {
+      return { error: e.message };
+    }
+    return { error: "Ocurrió un error procesando el retiro." };
   }
 }
