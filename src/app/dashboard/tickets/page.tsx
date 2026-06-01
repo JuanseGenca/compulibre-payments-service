@@ -53,7 +53,7 @@ export default async function MisTicketsPage() {
           {/* Badge dinámico según el estado */}
           {getStatusBadge(ticket.status)}
           
-          <span className="text-xs text-gray-400">
+          <span className="text-xs text-gray-700">
             Enviado el {new Date(ticket.createdAt).toLocaleDateString("es-AR")}
           </span>
         </div>

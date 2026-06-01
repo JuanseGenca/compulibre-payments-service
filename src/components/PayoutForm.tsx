@@ -36,7 +36,7 @@ export default function PayoutForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4 bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-      <h3 className="text-lg font-semibold text-gray-800">Solicitar Retiro</h3>
+      <h2 className="text-lg font-semibold text-gray-800">Solicitar Retiro</h2>
       
       {mensajeError && (
         <div className="p-3 bg-red-100 text-red-700 text-sm rounded-xl border border-red-200 font-medium">

@@ -75,23 +75,23 @@ export default async function AdminMetricasPage() {
         <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Volumen Procesado</h3>
+            <h2 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Volumen Procesado</h2>
             <p className="text-3xl font-black text-gray-900">$ {volumenTotal.toLocaleString("es-AR")}</p>
           </div>
 
           <div className="bg-white p-6 rounded-2xl border border-purple-200 shadow-sm bg-purple-50/30">
-            <h3 className="text-xs font-bold text-purple-400 uppercase tracking-wider mb-2">Ingresos (Comisión 5%)</h3>
+            <h2 className="text-xs font-bold text-purple-600 uppercase tracking-wider mb-2">Ingresos (Comisión 5%)</h2>
             <p className="text-3xl font-black text-purple-700">$ {gananciaPlataforma.toLocaleString("es-AR")}</p>
           </div>
 
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Operaciones Exitosas</h3>
+            <h2 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Operaciones Exitosas</h2>
             <p className="text-3xl font-black text-gray-900">{txCobradasCount}</p>
             <p className="text-xs text-gray-500 mt-1">De {totalTxCount} intentos totales</p>
           </div>
 
           <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
-            <h3 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Ticket Promedio</h3>
+            <h2 className="text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Ticket Promedio</h2>
             <p className="text-3xl font-black text-gray-900">$ {ticketPromedio.toLocaleString("es-AR", { maximumFractionDigits: 0 })}</p>
           </div>
 

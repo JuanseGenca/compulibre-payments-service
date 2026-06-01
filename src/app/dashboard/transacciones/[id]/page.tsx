@@ -71,13 +71,13 @@ export default async function TransactionDetailPage({
               {tx.status}
             </span>
 
-            <p className="text-gray-500 font-medium text-sm mt-4 uppercase tracking-widest">
+            <p className="text-gray-600 font-medium text-sm mt-4 uppercase tracking-widest">
               {esComprador ? "Total pagado" : "Ingreso por tus ventas"}
             </p>
             <h1 className="text-4xl font-black text-gray-900 mt-1">
               $ {totalMostrar.toLocaleString("es-AR")} {tx.currency}
             </h1>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="text-gray-600 text-sm mt-1">
               {new Date(tx.created_at).toLocaleString("es-AR", { 
                 dateStyle: 'long', 
                 timeStyle: 'short' 
@@ -91,14 +91,14 @@ export default async function TransactionDetailPage({
             
             {/* Detalle de Ítems */}
             <div>
-              <h2 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-4">
+              <h2 className="text-xs font-bold text-gray-600 uppercase tracking-widest mb-4">
                 Detalle de productos {esVendedor && "(Tus artículos)"}
               </h2>
               <ul className="space-y-3">
                 {misItems.map((item) => (
                   <li key={item.id} className="flex justify-between items-center text-gray-700">
                     <span className="font-medium">
-                      <span className="text-gray-400 mr-2">{item.quantity}x</span>
+                      <span className="text-gray-600 mr-2">{item.quantity}x</span>
                       {item.name}
                     </span>
                     $ {item.unit_price.toLocaleString("es-AR")} {tx.currency}
@@ -112,23 +112,23 @@ export default async function TransactionDetailPage({
             {/* Información Técnica */}
             <div className="grid grid-cols-2 gap-6 text-sm">
               <div>
-                <p className="text-gray-400 font-medium">Referencia de Orden</p>
+                <p className="text-gray-600 font-medium">Referencia de Orden</p>
                 <p className="text-gray-900 font-mono">{tx.external_order_reference || "N/A"}</p>
               </div>
               <div>
-                <p className="text-gray-400 font-medium">Método de Pago</p>
+                <p className="text-gray-600 font-medium">Método de Pago</p>
                 <p className="text-gray-900 capitalize">{tx.payment_method || "No especificado"}</p>
               </div>
               <div>
-                <p className="text-gray-400 font-medium">Rol en la operación</p>
+                <p className="text-gray-600 font-medium">Rol en la operación</p>
                 <p className="text-gray-900">{esVendedor ? "Vendedor" : "Comprador"}</p>
               </div>
               <div>
-                <p className="text-gray-400 font-medium">ID de Transacción</p>
+                <p className="text-gray-600 font-medium">ID de Transacción</p>
                 <p className="text-gray-700 text-xs truncate" title={tx.id}>{tx.id}</p>
               </div>
               <div>
-                <p className="text-gray-400 font-medium">Direccion del comprador</p>
+                <p className="text-gray-600 font-medium">Direccion del comprador</p>
                 <p className="text-gray-700 text-xs truncate" title={tx.buyerAddress}>{tx.buyerAddress}</p>
               </div>
               

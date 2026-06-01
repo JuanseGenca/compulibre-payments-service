@@ -78,7 +78,7 @@ export default async function AdminRetirosPage(props: {
                         <p className="text-sm text-gray-600 mt-1">
                           CBU Destino: <span className="font-mono bg-white border px-2 py-1 rounded select-all">{payout.destination_cbu}</span>
                         </p>
-                        <p className="text-xs text-gray-400 mt-2">Usuario: {payout.account_id}</p>
+                        <p className="text-xs text-gray-600 mt-2">Usuario: {payout.account_id}</p>
                       </div>
                       
                       <div className="flex items-center gap-2">
@@ -112,9 +112,9 @@ export default async function AdminRetirosPage(props: {
                     <li key={payout.id} className="flex justify-between items-center p-4 border border-gray-50 rounded-xl bg-gray-50/50 grayscale">
                       <div>
                         <p className="font-semibold text-gray-900">$ {payout.amount.toLocaleString('es-AR')}</p>
-                        <p className="text-xs text-gray-500">CBU Destino: {payout.destination_cbu}</p>
+                        <p className="text-xs text-gray-800">CBU Destino: {payout.destination_cbu}</p>
                       </div>
-                      <span className="text-xs font-bold text-green-600 uppercase">Pagado</span>
+                      <span className="text-xs font-bold text-green-800 uppercase">Pagado</span>
                     </li>
                   ))}
                 </ul>
