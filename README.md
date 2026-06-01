@@ -30,7 +30,7 @@ https://proyecto-c-payments-compulibre.vercel.app/
 Para saber cómo probar el endpoint de pagos y simular transacciones exitosas/rechazadas, por favor revisá la [Guía de Uso de la API](./docs/guia-uso.md).
 
 ## Limitaciones Conocidas y Seguridad (Webhooks)
-Actualmente, el endpoint que recibe las notificaciones de Mercado Pago no valida la firma criptográfica de mercadopago Esta validación fue desestimada temporalmente para esta entrega debido a inestabilidades y demoras detectadas en los webhooks del entorno *Sandbox* de Mercado Pago, priorizando la demostración del flujo funcional completo.
+Actualmente, el endpoint que recibe las notificaciones de Mercado Pago no valida la firma criptográfica. Esta validación fue desestimada temporalmente para esta entrega debido a inestabilidades y demoras detectadas en los webhooks del entorno *Sandbox* de Mercado Pago, priorizando la demostración del flujo funcional completo.
 
 **Mitigación actual:** A pesar de no contar con la firma, el sistema **no es vulnerable a inyección de pagos falsos**. El endpoint no confía en el `body` de la petición entrante; únicamente extrae el ID de la transacción y realiza una consulta segura de servidor a servidor (`Server-to-Server`) a la API de Mercado Pago para obtener el estado real y oficial del pago.
 

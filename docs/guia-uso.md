@@ -33,7 +33,7 @@ con x-api-key: <PAYMENTS_API_KEY>.
             ]
         }
 
-El POST devuelve un link de mercadopago, es preferible abrirlo en una pestaña de incognito por si tienen una sesion iniciada.
+El POST devuelve un link de Mercado Pago, es preferible abrirlo en una pestaña de incognito por si tienen una sesion iniciada.
     
 ### Una vez dentro del link para completar la compra hay que seguir los siguientes pasos:
 
@@ -55,11 +55,11 @@ El POST devuelve un link de mercadopago, es preferible abrirlo en una pestaña d
     
 6 - Por ultimo mercadopago va a pedir un codigo de verificacion, ingresar: 882260
 
-Cuando el pago se complete Mercadopago va a notificar a app/api/webhooks/mercadopago, el cual se va a encargar de actualizar el estado de la transaccion.
+Cuando el pago se complete Mercado Pago va a notificar a app/api/webhooks/mercadopago, el cual se va a encargar de actualizar el estado de la transaccion.
 
 ## Credenciales de Mercadopago
 
-Por si Mercadopago esta fallando dejo otra cuenta y otra tarjeta de prueba.
+Por si Mercado Pago esta fallando dejo otra cuenta y otra tarjeta de prueba.
 
 Cuenta1 (la del ejemplo):
 
