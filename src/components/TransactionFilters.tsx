@@ -69,9 +69,10 @@ export default function TransactionFilters() {
 
             {/* INPUT DE BUSCADOR POR TEXTO (Ejemplo, adaptalo al tuyo) */}
             <div className="flex flex-col w-full md:w-1/3">
-              <label className="text-xs text-gray-900 font-medium mb-1">Buscar producto</label>
+              <label htmlFor="Buscador" className="text-xs text-gray-900 font-medium mb-1">Buscar producto</label>
               <input
                 type="text"
+                id="Buscador"
                 placeholder="Buscar por descripción..."
                 className="border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-500 outline-none w-full"
                 value={busqueda}
@@ -97,9 +98,10 @@ export default function TransactionFilters() {
 
             {/* ACÁ PODÉS AGREGAR TUS INPUTS DE FECHAS DE LA MISMA MANERA */}
             <div className="flex flex-col w-full md:w-1/3">
-              <label className="text-xs text-gray-900 font-medium mb-1">Desde</label>
+              <label htmlFor="fechaDesde" className="text-xs text-gray-900 font-medium mb-1">Desde</label>
               <input
                 type="date"
+                id="fechaDesde"
                 value={searchParams.get("from") || ""}
                 onChange={(e) => handleFilter("from", e.target.value)}
                 className={`border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full
@@ -109,9 +111,10 @@ export default function TransactionFilters() {
             </div>
 
             <div className="flex flex-col w-full md:w-1/3">
-              <label className="text-xs text-gray-900 font-medium mb-1">Hasta</label>
+              <label htmlFor="fechaHasta" className="text-xs text-gray-900 font-medium mb-1">Hasta</label>
               <input
                 type="date"
+                id="fechaHasta"
                 value={searchParams.get("to") || ""}
                 onChange={(e) => handleFilter("to", e.target.value)}
                 className={`border border-gray-300 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none w-full

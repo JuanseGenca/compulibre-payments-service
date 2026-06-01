@@ -59,7 +59,7 @@ export default function ListaTransacciones({
                         }).format(montoMostrar)}
                       </p>
                       <span className="text-gray-300">•</span>
-                      <p className="text-xs text-gray-400">
+                      <p className="text-xs text-gray-900">
                         {new Date(tx.created_at).toLocaleDateString("es-AR")}
                       </p>             
                     </div>
