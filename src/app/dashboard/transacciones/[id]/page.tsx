@@ -2,7 +2,6 @@ import { prisma } from "@/lib/prisma";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/navbar";
 import PrintButton from "@/components/PrintButton";
 
 export default async function TransactionDetailPage({

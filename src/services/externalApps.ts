@@ -1,6 +1,28 @@
 // src/services/externalApps.ts
+// 1. Interface exacta para la App del Comprador
+interface BuyerPayload {
+  transactionId: string;
+  status: string;
+  paymentMethod: string | null;
+}
 
-export async function notifyBuyerApp(payload: any) {
+// 2. Interfaces para la App del Vendedor
+// (Separamos los items en su propia interface para que quede más prolijo)
+interface OrderItem {
+  productId: string;
+  quantity: number;
+}
+
+interface SellerPayload {
+  orderReference: string;
+  buyerId: string;
+  items: OrderItem[];
+  transactionId: string;
+  buyerAddress: string;
+  buyerCodigoPostal: number;
+}
+
+export async function notifyBuyerApp(payload: BuyerPayload) {
   console.log("🟦 [MOCK] Notificando a Buyer App:", payload);
   await new Promise(resolve => setTimeout(resolve, 500)); 
   //caso exito
@@ -8,7 +30,7 @@ export async function notifyBuyerApp(payload: any) {
     status: 200,
     data: {
       success: true,
-      orderStatus: payload.status || "PAID",
+      orderStatus: payload.status,
       error: null
     }
   };
@@ -24,7 +46,7 @@ export async function notifyBuyerApp(payload: any) {
   */
 }
 
-export async function confirmOrderSellerApp(payload: any) {
+export async function confirmOrderSellerApp(payload: SellerPayload) {
   console.log("🟩 [MOCK] Confirmando orden en Seller App:", payload);
   await new Promise(resolve => setTimeout(resolve, 500));
 

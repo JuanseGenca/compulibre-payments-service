@@ -41,6 +41,8 @@ export default function AdminVolumeChart({ chartData }: { chartData: ChartDataPo
           <XAxis dataKey="fecha" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} dy={10} />
           <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: "#6b7280" }} tickFormatter={(value) => `$${value}`} />
           <Tooltip 
+            // dejo any para no seguir peleando con el tipo que devuelve recharts, que es medio raro ya que tiene mil tipos graficos distintos.
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any 
             formatter={(value: any, name: any) => {
               const num = Number(value) || 0;
               return [`$ ${num.toLocaleString("es-AR")}`, name === 'total' ? 'Volumen Total' : 'Ganancia (5%)'];

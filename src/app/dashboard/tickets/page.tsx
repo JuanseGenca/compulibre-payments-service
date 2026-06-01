@@ -2,7 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import Navbar from "@/components/navbar";
+import { SupportTicket } from "@prisma/client"
 
 export default async function MisTicketsPage() {
   // 1. Validamos que el usuario esté logueado
@@ -43,7 +43,7 @@ export default async function MisTicketsPage() {
     }
   };
 
-  const renderTicketCard = (ticket: any) => (
+  const renderTicketCard = (ticket: SupportTicket) => (
     <div 
       key={ticket.id} 
       className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 hover:border-gray-300 transition-all"
@@ -60,7 +60,7 @@ export default async function MisTicketsPage() {
 
         <h3 className="font-bold text-gray-900 text-lg">{ticket.subject}</h3>
         <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-xl italic border border-gray-100">
-          "{ticket.message}"
+          <p> {`"${ticket.message}"`} </p>
         </p>
       </div>
 

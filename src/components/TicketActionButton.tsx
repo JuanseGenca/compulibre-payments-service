@@ -17,7 +17,7 @@ export default function TicketActionButton({ ticketId }: { ticketId: string }) {
         alert(result.error);
       }
     } catch (error) {
-      alert("Error interno al cerrar el ticket.");
+      console.error("Fallo inesperado:", error);
     } finally {
       setLoading(false);
     }

@@ -1,19 +1,17 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useTransition } from "react";
-import { useState } from "react";
+import { useEffect, useTransition, useState, useCallback } from "react";
 import Accordion from "./accordion";
 
 export default function TransactionFilters() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
-  const [isOpen, setIsOpen] = useState(false);
+  const [, startTransition] = useTransition();
   const [busqueda, setBusqueda] = useState(searchParams.get("q") || "");
 
-  function handleFilter(name: string, value: string) {
+  const handleFilter = useCallback((name: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
     if (value) {
       params.set(name, value);
@@ -25,7 +23,7 @@ export default function TransactionFilters() {
     startTransition(() => {
       router.push(`?${params.toString()}`);
     });
-  }
+  }, [searchParams, router]);
 
   useEffect(() => {
     // Iniciamos un temporizador de 500ms
@@ -40,7 +38,7 @@ export default function TransactionFilters() {
     return () => clearTimeout(timeoutId);
     
     // Este efecto solo vigila a la variable 'busqueda'
-  }, [busqueda, searchParams]);
+  }, [busqueda, searchParams, handleFilter]);
 
   const limpiarFiltros = () => {
     setBusqueda("");

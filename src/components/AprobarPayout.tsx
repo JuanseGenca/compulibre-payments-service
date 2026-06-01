@@ -17,7 +17,7 @@ export default function ApprovePayoutButton({ payoutId }: { payoutId: string }) 
         alert(result.error);
       }
     } catch (error) {
-      alert("Ocurrió un error al aprobar el retiro.");
+      console.error("Fallo inesperado:", error);
     } finally {
       setLoading(false);
     }

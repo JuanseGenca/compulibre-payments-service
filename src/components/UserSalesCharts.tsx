@@ -31,7 +31,7 @@ export default function UserSalesChart({ ventas }: { ventas: Transaction[] }) {
     const ventasCobradas = ventas.filter((v) => v.status === "PAID");
 
     // 2. Agrupamos por fecha (Ej: "15/05/2026")
-    const agrupado = ventasCobradas.reduce((acc: any, curr) => {
+    const agrupado = ventasCobradas.reduce((acc: Record<string, number>, curr) => {
       const fecha = new Date(curr.created_at).toLocaleDateString("es-AR", {
         day: "2-digit",
         month: "short", // Mostrará "15 may"
@@ -47,7 +47,7 @@ export default function UserSalesChart({ ventas }: { ventas: Transaction[] }) {
 
       acc[fecha] += gananciaReal;
       return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
     // 3. Convertimos el objeto en el array que necesita Recharts
     // [{ fecha: "14 may", total: 15000 }, { fecha: "15 may", total: 45000 }]
@@ -91,6 +91,8 @@ export default function UserSalesChart({ ventas }: { ventas: Transaction[] }) {
             tickFormatter={(value) => `$${value}`}
           />
           <Tooltip 
+            // dejo any para no seguir peleando con el tipo que devuelve recharts, que es medio raro ya que tiene mil tipos graficos distintos.
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             formatter={(value: any) => {
               // Nos aseguramos de que sea un número válido antes de formatearlo
               const numeroSeguro = Number(value) || 0;
