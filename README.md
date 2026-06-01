@@ -3,24 +3,31 @@
 
 Aplicación **Payments** del [Proyecto IAW 2026](https://iaw-2026.github.io/proyecto/) — comisión [CompuLibre](https://github.com/IAW-2026/proyecto-c-etapa-1-compulibre).
 
-Módulo central de pagos y gestión financiera para el ecosistema del marketplace CompuLibre. Esta aplicación procesa transacciones de carritos multi-vendedor utilizando la pasarela de Mercado Pago, distribuye las ganancias automáticamente a las cuentas correspondientes mediante webhooks, y ofrece un panel de control para que los usuarios gestionen sus ingresos y los administradores aprueben retiros (payouts).
+Módulo central de pagos y gestión financiera para el ecosistema del marketplace CompuLibre. Esta aplicación procesa transacciones de carritos multi-vendedor utilizando la pasarela de Mercado Pago, distribuye las ganancias automáticamente a las cuentas correspondientes, ofrece un panel de control para que los usuarios gestionen sus compras, ventas, retiros y disputas. Los administradores pueden ver y gestionar los retiros y las disputas, ademas de ver las metricas mas importantes de la plataforma. 
 
-## Link al Deploy: https://proyecto-c-payments-compulibre.vercel.app/
+## Link al Deploy: 
+
+https://proyecto-c-payments-compulibre.vercel.app/
 
 
-## Credenciales
+## Credenciales de prueba
 
-    usuario final: 
-        correo: usuario+clerk_test@iaw.com
-        password: iawuser#
-        id:user_3EXguWfvjPYCZNcvXhPAhQS5jid
+*(Nota: Si Clerk solicita un código de confirmación al iniciar sesión, es **424242** para ambas cuentas).*
+
+### **usuario final (comprador/vendedor):**
+
+- **correo:** usuario+clerk_test@iaw.com
+- **password:** iawuser#
+- **id:** user_3EXguWfvjPYCZNcvXhPAhQS5jid
     
-    administrador:
-        correo: administrador+clerk_test@iaw.com
-        password: iawuser#
-        id:user_3EKfDPzDBs9qXiSa5oXMFUcevFI
+### **administrador:**
 
-    Si clerk pide un codigo de confirmacion es 424242 para ambas cuentas.
+- **correo:** administrador+clerk_test@iaw.com
+- **password:** iawuser#
+- **id:** user_3EKfDPzDBs9qXiSa5oXMFUcevFI
+
+## Instrucciones de Uso
+Para saber cómo probar el endpoint de pagos y simular transacciones exitosas/rechazadas, por favor revisá la [Guía de Uso de la API](./docs/guia-uso.md).
 
 ---
 
