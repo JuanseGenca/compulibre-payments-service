@@ -2,10 +2,19 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import RejectPayoutButton from "@/components/RechazarPayout";
 import ApprovePayoutButton from "@/components/AprobarPayout";
+import Pagination from "@/components/Pagination";
 
-export default async function AdminRetirosPage() {
+export const dynamic = 'force-dynamic';
 
-  const [retirosPendientes, retirosCompletados] = await Promise.all([
+export default async function AdminRetirosPage(props: {
+  searchParams: Promise<{ page?: string }>;
+}) {
+  const searchParams = await props.searchParams;
+  const currentPage = Number(searchParams?.page) || 1;
+  const take = 10;
+  const skip = (currentPage - 1) * take;
+
+  const [retirosPendientes, retirosCompletados, totalCompletados] = await Promise.all([
         prisma.payout.findMany({
             where: { status: "PROCESSING" },
             include: { account: true },
@@ -14,10 +23,16 @@ export default async function AdminRetirosPage() {
         prisma.payout.findMany({
             where: { status: "COMPLETED" },
             include: { account: true },
-            orderBy: { id: "desc" }, // Los más recientes primero
-            take: 10 // Mostramos solo los últimos 10 para no saturar
+            orderBy: { id: "desc" },
+            take,
+            skip,
+        }),
+        prisma.payout.count({
+            where: { status: "COMPLETED" },
         })
     ]);
+
+  const hasMoreCompletados = totalCompletados > skip + take;
 
   return (
       <main className="p-8">
@@ -108,6 +123,11 @@ export default async function AdminRetirosPage() {
               )}
             </div>
           </div>
+          
+          {/* Paginación de Historial */}
+          {totalCompletados > take && (
+            <Pagination currentPage={currentPage} hasMore={hasMoreCompletados} />
+          )}
 
         </div>
       </main>
