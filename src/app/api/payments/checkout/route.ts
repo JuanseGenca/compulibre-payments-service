@@ -74,7 +74,7 @@ export async function POST(request: Request) {
       body: {
         items: mpItems, 
         external_reference: transaction.id,
-        notification_url: webhookUrl,
+        //notification_url: webhookUrl,
       },
     });
 
