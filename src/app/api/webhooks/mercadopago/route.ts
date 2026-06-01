@@ -3,56 +3,13 @@ import { Payment } from 'mercadopago';
 import { prisma } from "@/lib/prisma";
 import { mpClient } from '@/lib/mercadopago';
 import { notifyBuyerApp, confirmOrderSellerApp } from '@/services/externalApps';
-import crypto from 'crypto';
 
 export async function POST(request: Request) {
   try {
-    const signatureHeader = request.headers.get('x-signature');
-    const requestId = request.headers.get('x-request-id');
-
-    // Si falta alguno de los headers, bloqueamos por intento sospechoso / DoS
-    if (!signatureHeader || !requestId) {
-      console.warn("Intento de acceso al webhook sin firma");
-      return NextResponse.json({ error: 'Firma no proporcionada' }, { status: 401 });
-    }
-
     // Mercado Pago manda información en los parámetros de la URL
     const url = new URL(request.url);
     const type = url.searchParams.get('type') || url.searchParams.get('topic');
     const paymentId = url.searchParams.get('data.id') || url.searchParams.get('id');
-
-
-    let ts = '';
-    let v1 = '';
-    const parts = signatureHeader.split(',');
-    parts.forEach((part) => {
-      const [key, value] = part.split('=');
-      if (key === 'ts') ts = value;
-      if (key === 'v1') v1 = value;
-    });
-
-    // 3. Generar nuestra propia firma para comparar
-    const secret = process.env.MP_WEBHOOK_SECRET;
-    if (!secret) {
-      console.error("CRÍTICO: Falta configurar MP_WEBHOOK_SECRET en .env");
-      return NextResponse.json({ error: 'Error interno de configuración' }, { status: 500 });
-    }
-
-    // El manifiesto exacto que exige Mercado Pago para encriptar
-    const manifest = `id:${paymentId};request-id:${requestId};ts:${ts};`;
-    
-    const hmac = crypto.createHmac('sha256', secret);
-    hmac.update(manifest);
-    const ourSignature = hmac.digest('hex');
-
-    // 4. Si la firma matemática no coincide, es un atacante intentando inyectar datos
-    if (ourSignature !== v1) {
-      console.error(`Firma inválida para el pago ${paymentId}`);
-      return NextResponse.json({ error: 'Firma inválida' }, { status: 403 });
-    }
-    // --- FIN DE LA VALIDACIÓN DE SEGURIDAD ---
-
-
 
     // Nos aseguramos de que el aviso sea sobre un pago y traiga un ID
     if (type === 'payment' && paymentId) {
