@@ -5,7 +5,9 @@ import { NextResponse } from 'next/server';
 const isPublicRoute = createRouteMatcher([
   '/',
   '/api/payments/checkout(.*)',
-  '/api/webhooks/mercadopago(.*)'
+  '/api/webhooks/mercadopago(.*)',
+  '/api/control-panel(.*)', 
+  '/api/analytics(.*)'
 ]);
 
 
