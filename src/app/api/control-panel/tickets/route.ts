@@ -51,6 +51,12 @@ export async function GET(request: Request) {
 
 // PATCH: Cerrar o actualizar estado de un ticket (Lógica directa)
 export async function PATCH(request: Request) {
+
+    const apiKey = request.headers.get('x-api-key');
+    if (process.env.PAYMENTS_API_KEY && apiKey !== process.env.PAYMENTS_API_KEY) {
+        return NextResponse.json({ error: "No autorizado" }, { status: 401 });
+    }
+
   try {
     const body = await request.json();
     const { ticketId, action } = body;
