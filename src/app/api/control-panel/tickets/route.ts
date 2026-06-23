@@ -5,7 +5,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request: Request) {
 
     const apiKey = request.headers.get('x-api-key');
-    if (process.env.PAYMENTS_API_KEY && apiKey !== process.env.PAYMENTS_API_KEY) {
+    if (process.env.SUPERADMIN_API_KEY && apiKey !== process.env.SUPERADMIN_API_KEY) {
         return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 
@@ -53,7 +53,7 @@ export async function GET(request: Request) {
 export async function PATCH(request: Request) {
 
     const apiKey = request.headers.get('x-api-key');
-    if (process.env.PAYMENTS_API_KEY && apiKey !== process.env.PAYMENTS_API_KEY) {
+    if (process.env.SUPERADMIN_API_KEY && apiKey !== process.env.SUPERADMIN_API_KEY) {
         return NextResponse.json({ error: "No autorizado" }, { status: 401 });
     }
 

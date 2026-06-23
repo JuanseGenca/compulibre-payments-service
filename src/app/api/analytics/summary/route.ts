@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma';
 export async function GET(request: Request) {
   // 1. Validar seguridad inter-servicios (Opcional pero recomendado)
   const apiKey = request.headers.get('x-api-key');
-  if (process.env.PAYMENTS_API_KEY && apiKey !== process.env.PAYMENTS_API_KEY) {
+  if (process.env.ANALYTICS_API_KEY && apiKey !== process.env.ANALYTICS_API_KEY) {
     return NextResponse.json({ error: "No autorizado" }, { status: 401 });
   }
 
