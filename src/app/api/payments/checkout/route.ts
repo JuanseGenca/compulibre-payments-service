@@ -70,11 +70,19 @@ export async function POST(request: Request) {
 
     const webhookUrl = process.env.WEBHOOK_URL;
 
+    const baseUrl = process.env.BUYER_APP_URL || "http://localhost:3000";
+
     const result = await preference.create({
       body: {
         items: mpItems, 
         external_reference: transaction.id,
         notification_url: webhookUrl,
+        back_urls: {
+          success: `${baseUrl}/orders/${orderReference}?success=true`,
+          failure: `${baseUrl}/orders/${orderReference}?success=false`, // Nota: le agregué /orders/ para mantener la ruta, borralo si querías mandarlo a la raíz
+          pending: `${baseUrl}/orders/${orderReference}`
+        },
+        auto_return: "approved",
       },
     });
 
