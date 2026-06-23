@@ -137,29 +137,6 @@ export default async function DashboardPage({
         
         <TarjetaSaldo saldoDisponible={saldoDisponible} />
 
-        {/* GRÁFICO DE VENTAS (Solo lo mostramos si estamos en ventas) */}
-        {activeTab === "ventas" && (
-          <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Rendimiento de Ventas</h2>
-            <p className="text-sm text-gray-500 mb-4">Evolución de tus ingresos cobrados.</p>
-            <UserSalesChart ventas={misTransacciones} />
-          </section>
-        )}
-
-        
-        {/* GRÁFICO DE COMPRAS (Solo lo mostramos si estamos en compras) */}
-        {activeTab === "compras" && (
-          <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
-            <h2 className="text-xl font-bold text-gray-900 mb-2">Historial de compras</h2>
-            <p className="text-sm text-gray-500 mb-4">Evolución de tus gastos realizados.</p>
-            <UserSalesChart ventas={misTransacciones} />
-          </section>
-        )}
-        
-        <section>
-          <TransactionFilters />
-        </section>
-
         {/* NAVEGACIÓN POR PESTAÑAS (TABS) */}
         <div className="border-b border-gray-200">
           <nav className="-mb-px flex space-x-8" aria-label="Tabs">
@@ -189,6 +166,29 @@ export default async function DashboardPage({
             </Link>
           </nav>
         </div>
+
+        {/* GRÁFICO DE VENTAS (Solo lo mostramos si estamos en ventas) */}
+        {activeTab === "ventas" && (
+          <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Rendimiento de Ventas</h2>
+            <p className="text-sm text-gray-500 mb-4">Evolución de tus ingresos cobrados.</p>
+            <UserSalesChart ventas={misTransacciones} />
+          </section>
+        )}
+
+        
+        {/* GRÁFICO DE COMPRAS (Solo lo mostramos si estamos en compras) */}
+        {activeTab === "compras" && (
+          <section className="bg-white p-6 md:p-8 rounded-3xl border border-gray-200 shadow-sm">
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Historial de compras</h2>
+            <p className="text-sm text-gray-500 mb-4">Evolución de tus gastos realizados.</p>
+            <UserSalesChart ventas={misTransacciones} />
+          </section>
+        )}
+        
+        <section>
+          <TransactionFilters />
+        </section>
 
         {/* LISTA PRINCIPAL (Depende de la pestaña activa) */}
         <div className="w-full">
