@@ -18,7 +18,7 @@ export async function POST(request: Request) {
     const apiKey = request.headers.get("x-api-key");
 
     // 2. Comparamos con la llave de nuestro entorno
-    if (!apiKey || apiKey !== process.env.PAYMENTS_API_KEY) {
+    if (!apiKey || apiKey !== process.env.BUYER_API_KEY) {
       return NextResponse.json(
         { error: "Acceso denegado. API Key inválida o faltante." },
         { status: 401 } // 401 Unauthorized
