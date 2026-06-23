@@ -88,9 +88,10 @@ export async function POST(request: Request) {
 
           //Llamada a Buyer App
           const buyerResponse = await notifyBuyerApp({
-           transactionId: txRecord.id,
+            orderId: txRecord.external_order_reference,
+            transactionId: txRecord.id,
             status: finalStatus,
-           paymentMethod: txRecord.payment_method
+            paymentMethod: txRecord.payment_method
          });
 
          if (buyerResponse.status === 200) {
