@@ -38,7 +38,7 @@ export async function notifyBuyerApp(payload: BuyerPayload) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.INTERNAL_API_KEY || '',
+        'x-api-key': process.env.PAYMENTS_API_KEY || '',
       },
       // 2. Mandamos el resto de los datos en el Body exacto que pide el endpoint
       body: JSON.stringify({
