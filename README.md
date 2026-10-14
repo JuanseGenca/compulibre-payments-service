@@ -1,41 +1,71 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-22041afd0340ce965d47ae6ef1cefeee28c7c493a6346c4f15d667ab976d596c.svg)](https://classroom.github.com/a/Ks7Ywtwc)
-# Payments
+# 💳 CompuLibre — Payments Service
 
-Aplicación **Payments** del [Proyecto IAW 2026](https://iaw-2026.github.io/proyecto/) — comisión [CompuLibre](https://github.com/IAW-2026/proyecto-c-etapa-1-compulibre).
+![Next.js](https://img.shields.io/badge/Next.js-16-black?style=flat-square&logo=next.js)
+![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript)
+![Prisma](https://img.shields.io/badge/Prisma-7-2D3748?style=flat-square&logo=prisma)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql)
+![Mercado Pago](https://img.shields.io/badge/Mercado_Pago-SDK-009EE3?style=flat-square)
+![Clerk](https://img.shields.io/badge/Clerk-Auth-6C47FF?style=flat-square&logo=clerk)
 
-Módulo central de pagos y gestión financiera para el ecosistema del marketplace CompuLibre. Esta aplicación procesa transacciones de carritos multi-vendedor utilizando la pasarela de Mercado Pago, distribuye las ganancias automáticamente a las cuentas correspondientes, ofrece un panel de control para que los usuarios gestionen sus compras, ventas, retiros y disputas. Los administradores pueden ver y gestionar los retiros y las disputas, ademas de ver las metricas mas importantes de la plataforma. 
-
-## Link al Deploy: 
-
-https://proyecto-c-payments-compulibre.vercel.app/
-
-
-## Credenciales de prueba
-
-*(Nota: Si Clerk solicita un código de confirmación al iniciar sesión, es **424242** para ambas cuentas).*
-
-### **usuario final (comprador/vendedor):**
-
-- **correo:** usuario+clerk_test@iaw.com
-- **password:** iawuser#
-- **id:** user_3EXguWfvjPYCZNcvXhPAhQS5jid
-    
-### **administrador:**
-
-- **correo:** administrador+clerk_test@iaw.com
-- **password:** iawuser#
-- **id:** user_3EKfDPzDBs9qXiSa5oXMFUcevFI
-
-## Instrucciones de Uso
-Para saber cómo probar el endpoint de pagos y simular transacciones exitosas/rechazadas, por favor revisá la [Guía de Uso de la API](./docs/guia-uso.md).
-
-## Limitaciones Conocidas y Seguridad (Webhooks)
-Actualmente, el endpoint que recibe las notificaciones de Mercado Pago no valida la firma criptográfica. Esta validación fue desestimada temporalmente para esta entrega debido a inestabilidades y demoras detectadas en los webhooks del entorno *Sandbox* de Mercado Pago, priorizando la demostración del flujo funcional completo.
-
-**Mitigación actual:** A pesar de no contar con la firma, el sistema **no es vulnerable a inyección de pagos falsos**. El endpoint no confía en el `body` de la petición entrante; únicamente extrae el ID de la transacción y realiza una consulta segura de servidor a servidor (`Server-to-Server`) a la API de Mercado Pago para obtener el estado real y oficial del pago.
-
-**Debilidad identificada:** Al no validar el origen de la petición en la capa superior, el endpoint queda expuesto a posibles ataques de Denegación de Servicio (DoS). Un atacante podría enviar peticiones masivas con IDs aleatorios, lo que provocaría llamadas innecesarias a la API de Mercado Pago y podría agotar la cuota de peticiones del servidor. Su mitigación mediante firmas HMAC queda pendiente.
+Microservicio de pagos, billetera virtual y liquidación financiera para **CompuLibre** un marketplace de componentes y hardware de computación. Procesa órdenes multi-vendedor integrando **Mercado Pago**, administra saldos y solicitudes de extracción (CBU) para vendedores, y resuelve disputas.
 
 ---
 
-Enunciado completo: <https://iaw-2026.github.io/proyecto/>
+## Demo en Vivo
+
+**Link al deploy:** **[proyecto-c-payments-compulibre.vercel.app](https://proyecto-c-payments-compulibre.vercel.app/)**
+
+> Si Clerk solicita código 2FA en el login de prueba, ingresar **`424242`**.
+
+* **Vendedor / Usuario:** `usuario+clerk_test@iaw.com` | `iawuser#` | Ver transacciones, consultar saldo, solicitar retiros bancarios (CBU), abrir tickets de soporte.
+* **Administrador:** `administrador+clerk_test@iaw.com` | `iawuser#` | Aprobar/rechazar retiros, gestionar y cerrar disputas, dashboard analítico de volumen.
+
+---
+
+## Arquitectura y Flujo
+
+```mermaid
+flowchart LR
+    A[Buyer App] -->|POST Checkout| B(Payments Service)
+    B -->|Crea Preference| C[Mercado Pago]
+    C -->|Webhook IPN| B
+    B -->|Verificación S2S| C
+    B -->|Prisma $transaction| D[(PostgreSQL)]
+    B -.->|Notificación| E[Buyer & Seller Apps]
+```
+
+---
+
+## Características del Sistema
+
+* **Checkout Multi-Vendedor:** Agrupa productos de múltiples vendedores en una sola orden de compra y genera la preferencia de pago en Mercado Pago.
+* **Validación Server-to-Server (S2S):** Consulta directamente a la API oficial de Mercado Pago ante cada webhook recibido, verificando el estado real y mitigando la inyección de pagos falsos.
+* **Transacciones Atómicas e Idempotencia:** Procesamiento mediante `prisma.$transaction` con filtros condicionales para evitar cobros duplicados y asegurar la consistencia financiera.
+* **Billetera Virtual & Retiros (Payouts):** Acreditación de saldo en tiempo real a cada vendedor y sistema de solicitud de transferencias bancarias, auditadas y aprobadas por administradores.
+* **Seguridad Inter-Servicios & RBAC:** Control de acceso por roles con Clerk (`user` vs `admin`) y autenticación de endpoints internos mediante encabezados `x-api-key`.
+
+---
+
+## Puesta en Marcha Local
+
+```bash
+# 1. Instalar dependencias
+npm install
+
+# 2. Configurar variables de entorno
+cp .env.example .env
+
+# 3. Base de datos y seed de datos de prueba
+npx prisma db push
+npm run seed
+
+# 4. Iniciar entorno de desarrollo
+npm run dev
+```
+
+---
+
+## Documentación de la API (Sandbox)
+
+Para ver el contrato de endpoints, ejemplos con `cURL`, payloads y tarjetas de prueba de Mercado Pago, consultá la [**Guía de Pruebas e Integración**](./docs/guia-uso.md).

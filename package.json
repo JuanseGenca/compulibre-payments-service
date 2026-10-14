@@ -1,6 +1,7 @@
 {
-  "name": "proyecto-c-payments-compulibre",
-  "version": "0.1.0",
+  "name": "compulibre-payments-service",
+  "version": "1.0.0",
+  "description": "Microservicio financiero y pasarela de pagos multi-vendedor con Mercado Pago, Next.js y Prisma",
   "private": true,
   "scripts": {
     "dev": "next dev",
